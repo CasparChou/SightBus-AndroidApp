@@ -2,7 +2,6 @@ package tenoz.lab.sightbus;
 
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
@@ -34,18 +33,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapUtils.setContext( getApplicationContext() );
         mapListeners.setMapUtil( mapUtils );
         mapUtils.setListener( mapListeners );
-        /*
-                 *  Request Permissions
-                 */
-        ActivityCompat.requestPermissions(this,
-                new String[]{
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                        android.Manifest.permission.INTERNET
-                }, 8
-        );
-
+        mapUtils.setActivity( this );
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
 
     @Override
@@ -53,11 +44,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         this.map = map;
         mapListeners.setMap( map );
         mapUtils.setMap( map );
-        mapUtils.updateLocation();
 
-        LatLng curr_position = mapUtils.loc2Lat( mapUtils.getLastKnownLocation() );
+        if( mapUtils.checkPermission() ){
+            mapUtils.updateLocation();
+        } else {
+            finishActivity(0);
+        }
+
+
+
 
         try {
+            LatLng curr_position = mapUtils.loc2Lat( mapUtils.getLastKnownLocation() );
             mapUtils.moveCamera(curr_position);
         } catch ( NullPointerException e ){
             new AlertDialog.Builder(MapActivity.this)
