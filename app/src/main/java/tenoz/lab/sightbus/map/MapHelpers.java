@@ -22,10 +22,10 @@ import java.util.List;
 public class MapHelpers {
 
     private MapLocationListeners listener;
-    private Context context;
     private GoogleMap map;
     private LocationManager locationManager;
     private Activity activity;
+    private Context context;
 
     public void setContext(Context context) {
         this.context = context;
@@ -45,7 +45,7 @@ public class MapHelpers {
 
     public void moveCamera(LatLng latLng){
 
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16);
         map.animateCamera(cameraUpdate);
         if( !checkPermission() ) return;
         locationManager.removeUpdates(this.listener);
@@ -70,7 +70,6 @@ public class MapHelpers {
     }
     public boolean checkPermission(){
         if (ActivityCompat.checkSelfPermission(this.context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            Toast.makeText(this.context, "您需要授權定位服務", Toast.LENGTH_SHORT).show();
             requestPermission();
         } else {
             return true;
@@ -88,6 +87,10 @@ public class MapHelpers {
         return new LatLng(loc.getLatitude(), loc.getLongitude());
     }
 
+    public LatLng plusCode2Lat(String str){
+        OpenLocationCode code = new OpenLocationCode( str );
+        return new LatLng(code.decode().getCenterLatitude(), code.decode().getCenterLongitude());
+    }
     public LatLng plusCode2Lat(OpenLocationCode code){
         return new LatLng(code.decode().getCenterLatitude(), code.decode().getCenterLongitude());
     }
@@ -104,4 +107,5 @@ public class MapHelpers {
     public void setActivity(Activity activity) {
         this.activity = activity;
     }
+
 }
