@@ -29,4 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void openSearchStops(View view){
+
+        Intent intent = new Intent(getApplicationContext(), SearchStops.class);
+        startActivity(intent);
+
+    }
+
 }
