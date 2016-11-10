@@ -1,6 +1,5 @@
 package tenoz.lab.sightbus.map;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -15,6 +14,8 @@ import com.google.openlocationcode.OpenLocationCode;
 
 import java.util.List;
 
+import tenoz.lab.sightbus.MapActivity;
+
 /**
  * Created by AppleCaspar on 2016/10/21.
  */
@@ -24,7 +25,7 @@ public class MapHelpers {
     private MapLocationListeners listener;
     private GoogleMap map;
     private LocationManager locationManager;
-    private Activity activity;
+    private MapActivity activity;
     private Context context;
 
     public void setContext(Context context) {
@@ -49,6 +50,7 @@ public class MapHelpers {
         map.animateCamera(cameraUpdate);
         if( !checkPermission() ) return;
         locationManager.removeUpdates(this.listener);
+        this.activity.reloadStops();
 
     }
     public Location getLastKnownLocation() {
@@ -104,8 +106,11 @@ public class MapHelpers {
             8);
     }
 
-    public void setActivity(Activity activity) {
+    public void setActivity(MapActivity activity) {
         this.activity = activity;
     }
 
+    public MapActivity getActivity() {
+        return activity;
+    }
 }

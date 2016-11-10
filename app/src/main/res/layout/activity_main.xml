@@ -24,4 +24,14 @@
         android:layout_marginTop="100dp"
         android:layout_below="@+id/button2"
         android:layout_alignParentStart="true" />
+
+
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/main_activity_search_stop_btn"
+        android:onClick="openSearchStops"
+        android:layout_marginTop="200dp"
+        android:layout_below="@+id/btn_search_stops"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

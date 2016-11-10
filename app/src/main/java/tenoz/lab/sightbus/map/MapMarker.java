@@ -17,7 +17,7 @@ import tenoz.lab.sightbus.StopsActivity;
  * Created by AppleCaspar on 2016/10/21.
  */
 
-public class MapMarker implements GoogleMap.OnMarkerClickListener {
+public class MapMarker implements GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener {
 
     private MapLocationListeners listener;
     private GoogleMap map;
@@ -27,14 +27,7 @@ public class MapMarker implements GoogleMap.OnMarkerClickListener {
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        try {
-            Log.i("Marker", marker.getId() + ", Clicked: " + markers.get(marker.getId()));
-            Intent stop = new Intent(this.activity, StopsActivity.class);
-            stop.putExtra("Title@Actionbar", markers.get(marker.getId()));
-            this.activity.startActivity(stop);
-        } catch ( NullPointerException e ){
 
-        }
         return false;
     }
 
@@ -51,6 +44,18 @@ public class MapMarker implements GoogleMap.OnMarkerClickListener {
 
     public void setMap(GoogleMap map) {
         this.map = map;
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        try {
+            Log.i("Marker", marker.getId() + ", Clicked: " + markers.get(marker.getId()));
+            Intent stop = new Intent(this.activity, StopsActivity.class);
+            stop.putExtra("Title@Actionbar", markers.get(marker.getId()));
+            this.activity.startActivity(stop);
+        } catch ( NullPointerException e ){
+
+        }
     }
 }
 

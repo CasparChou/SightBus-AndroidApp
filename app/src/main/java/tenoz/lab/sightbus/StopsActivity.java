@@ -5,25 +5,30 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.commonsware.cwac.merge.MergeAdapter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import tenoz.lab.sightbus.http.Api;
 
 public class StopsActivity extends AppCompatActivity {
 
     private ListView listView;
+    private ListView listInfoView;
+
+
+    View clickSource;
+    View touchSource;
+
     private SimpleAdapter adapter;
     private List<Map<String,String>> routesList = new ArrayList<Map<String, String>>();
     @Override
@@ -34,37 +39,51 @@ public class StopsActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(getIntent().getExtras().getString("Title@Actionbar"));
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x00DD00));
         listView = (ListView) findViewById( R.id.route_list );
+        listInfoView = (ListView) findViewById( R.id.route_info_list );
+        overridePendingTransition(R.anim.scale_in, R.anim.scale_out);
+
+        listView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(touchSource == null)
+                    touchSource = v;
+
+                if(v == touchSource) {
+                    listInfoView.dispatchTouchEvent(event);
+                    if(event.getAction() == MotionEvent.ACTION_UP) {
+                        clickSource = v;
+                        touchSource = null;
+                    }
+                }
+
+                return false;
+            }
+        });
 
 
-//        setListAdapter(adapter);
         loadList();
     }
 
     private void loadList(){
-        String data = "{\"route\":[\"99\",\"111\",\"235\",\"513\",\"635\",\"636\",\"637\",\"638\",\"639\",\"797\",\"799\",\"800\",\"801\",\"802\",\"802區\",\"810\",\"842\",\"845\",\"880\",\"883\",\"1501\",\"1503\",\"5009\",\"5675\"]}";
+        Api.getRoutes(this);
 
-        try {
-            JSONObject  jsonRootObject = new JSONObject(data);
-            JSONArray routes = jsonRootObject.optJSONArray("route");
+    }
 
-            for( int i = 0; i < routes.length(); i++){
-                Log.i("Route", routes.getString(i));
-                Map<String, String> datum = new HashMap<String, String>(2);
-                datum.put("title",  routes.getString(i));
-                datum.put("date",  System.currentTimeMillis() / 1000L +"");
-                routesList.add( datum );
-            }
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.scale_in, R.anim.translate_out);
+    }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void setRoutesList(List<Map<String, String>> routesList) {
+        this.routesList = routesList;
 
         adapter = new SimpleAdapter(
-                this,
-                routesList,
-                android.R.layout.simple_list_item_2,
-                new String[] {"title", "date"},
-                new int[] {android.R.id.text1,android.R.id.text2}
+            this,
+            routesList,
+            android.R.layout.simple_list_item_2,
+            new String[] {"title", "date"},
+            new int[] {android.R.id.text1,android.R.id.text2}
         ){
             @Override
             public View getView(int position, View convertView, ViewGroup parent){
@@ -74,20 +93,16 @@ public class StopsActivity extends AppCompatActivity {
 
                 TextView timeText = (TextView) view.findViewById(android.R.id.text2);
                 timeText.setTextColor(Color.GRAY);
+
                 return view;
             }
         };
-        listView.setAdapter(adapter);
-
-
-        new android.os.Handler().postDelayed(
-            new Runnable() {
-                public void run() {
-                    ProgressBar bar = (ProgressBar) findViewById( R.id.ProgressBar );
-                    bar.setVisibility(View.INVISIBLE);
-                }
-            },
-            10000);
-
+        //        listView.setAdapter(adapter);
+        //        listInfoView.setAdapter(adapter);
+        MergeAdapter mergeAdapter = new MergeAdapter();
+        mergeAdapter.addAdapter(adapter);
+//        mergeAdapter.addAdapter(adapter);
+        listView.setAdapter(mergeAdapter);
+        listInfoView.setAdapter(mergeAdapter);
     }
 }

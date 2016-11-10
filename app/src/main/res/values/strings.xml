@@ -3,4 +3,5 @@
     <string name="main_activity_btn">T-Button</string>
     <string name="sec_text">The Sceond</string>
     <string name="main_activity_go_map_btn">Open Map</string>
+    <string name="main_activity_search_stop_btn">Search Stops</string>
 </resources>
