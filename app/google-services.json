@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "896434153623",
+    "firebase_url": "https://sightbus-ff045.firebaseio.com",
+    "project_id": "sightbus-ff045",
+    "storage_bucket": "sightbus-ff045.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896434153623:android:f0ecd5ffc8d64fb3",
+        "android_client_info": {
+          "package_name": "tenoz.lab.sightbus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "896434153623-1jkid8fhjf330s15tfs3imurj8p4fql1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tenoz.lab.sightbus",
+            "certificate_hash": "ABF0448DEF3233E8D215A5996D2C4ADA9EC8CD09"
+          }
+        },
+        {
+          "client_id": "896434153623-vvup1tt3bcomm74hf8tvvr5ndi4hkadk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQT-zuwQ0K1UzRMXhrlykx2iYe0UxYG48"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "896434153623-vvup1tt3bcomm74hf8tvvr5ndi4hkadk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

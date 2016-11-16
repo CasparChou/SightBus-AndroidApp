@@ -17,12 +17,18 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.VisibleRegion;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.Map;
 
 import tenoz.lab.sightbus.http.Api;
 import tenoz.lab.sightbus.map.MapHelpers;
 import tenoz.lab.sightbus.map.MapLocationListeners;
 import tenoz.lab.sightbus.map.MapMarker;
+import tenoz.lab.sightbus.map.StopMarker;
 
 /**
  * Created by AppleCaspar on 2016/10/19.
@@ -35,6 +41,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private MapLocationListeners mapListeners = new MapLocationListeners();
     private MapMarker mapMarkerListeners = new MapMarker();
     public LatLng[] bounds = new LatLng[2];
+    private Map<String, StopMarker> nearbyStops = new HashMap<String, StopMarker>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,21 +115,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
 
-    public void addMarker( LatLng latLng, String title ){
+    public Marker addMarker( LatLng latLng, String title ){
         BitmapDescriptor descriptor = (
                 BitmapDescriptorFactory.fromResource(
                         getResources().getIdentifier("marker", "drawable", getPackageName())
                 )
         );
-        Marker mark = this.map.addMarker(
-            new MarkerOptions()
+        return (
+            this.map.addMarker(
+                new MarkerOptions()
                     .position( latLng )
                     .title( title )
                     .icon( descriptor )
                     .snippet("開啟站牌")
+            )
         );
-        String id = mark.getId();
-        mapMarkerListeners.markers.put(id,title);
     }
 
     @Override
@@ -130,12 +138,32 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         overridePendingTransition(R.anim.translate_in, R.anim.translate_out);
     }
 
-    public void setNearbyStops(Map<String,LatLng> nearbyStops) {
-        Log.i("Setting", "Nearby");
-        if( null != nearbyStops ) {
-            for (Map.Entry<String, LatLng> stops : nearbyStops.entrySet()) {
-                addMarker(stops.getValue(), stops.getKey());
-            }
+    public void parserResults(String fetch) {
+        if( null == fetch ) {
+            return;
         }
+        try {
+            JSONObject jsonRootObject = new JSONObject(fetch);
+            JSONArray allStops = jsonRootObject.optJSONArray("stops");
+            for( int i = 0; i < allStops.length(); i++){
+                JSONObject stop = allStops.getJSONObject(i);
+                StopMarker stopMark = new StopMarker(
+                        stop.getInt("id"),
+                        false, //stop.getInt("goBack")
+                        stop.getString("name"),
+                        new LatLng(
+                                stop.getDouble("lat"),
+                                stop.getDouble("lng")
+                        )
+                );
+                Marker mark = addMarker(stopMark.latlng, stopMark.name+":"+stopMark.stopid);
+                nearbyStops.put(mark.getId(), stopMark );
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public Map<String, StopMarker> getNearbyStops(){
+        return  nearbyStops;
     }
 }

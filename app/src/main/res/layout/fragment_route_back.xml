@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_stops"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="0dp"
-    android:paddingLeft="0dp"
-    android:paddingRight="0dp"
-    android:paddingTop="0dp">
+    android:layout_height="match_parent">
+
     <ListView
-        android:id="@+id/route_info_list"
+        android:id="@+id/stop_route_back"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
@@ -20,22 +17,12 @@
         android:divider="@android:color/transparent"
         android:listSelector="@android:color/transparent" />
 
-
-    <ProgressBar
-        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-        android:id="@+id/ProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:indeterminate="true"
-        android:visibility="visible"
-        android:layout_alignParentTop="true" />
-
     <ListView
-        android:id="@+id/route_list"
+        android:id="@+id/estimate_route_back"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="-5dp"
+        android:layout_marginLeft="0dp"
         android:dividerHeight="0dp"
         android:divider="@android:color/transparent"
         android:layout_alignParentBottom="true"

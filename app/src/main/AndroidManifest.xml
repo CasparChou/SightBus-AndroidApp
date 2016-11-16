@@ -23,6 +23,9 @@
         </activity>
         <activity android:name=".SecActivity" />
         <activity
+            android:name=".SearchRoutes"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity
             android:name=".MapActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
@@ -33,6 +36,10 @@
         <activity
             android:name=".StopsActivity"
             android:theme="@style/Theme.AppCompat.Light" />
+
+        <activity
+            android:name=".EstimateRoutesActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -41,7 +48,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".SearchStops"></activity>
     </application>
 
 </manifest>

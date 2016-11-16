@@ -25,7 +25,6 @@ public class StopsActivity extends AppCompatActivity {
     private ListView listView;
     private ListView listInfoView;
 
-
     View clickSource;
     View touchSource;
 
@@ -35,7 +34,8 @@ public class StopsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stops);
-        Log.i("Test", getIntent().getExtras().getString("Title@Actionbar"));
+        Log.i("StopName", getIntent().getExtras().getString("Title@Actionbar"));
+        Log.i("StopID", getIntent().getExtras().getInt("StopID")+"");
         getSupportActionBar().setTitle(getIntent().getExtras().getString("Title@Actionbar"));
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x00DD00));
         listView = (ListView) findViewById( R.id.route_list );
@@ -97,12 +97,12 @@ public class StopsActivity extends AppCompatActivity {
                 return view;
             }
         };
-        //        listView.setAdapter(adapter);
-        //        listInfoView.setAdapter(adapter);
+
         MergeAdapter mergeAdapter = new MergeAdapter();
         mergeAdapter.addAdapter(adapter);
-//        mergeAdapter.addAdapter(adapter);
         listView.setAdapter(mergeAdapter);
         listInfoView.setAdapter(mergeAdapter);
     }
+
+
 }

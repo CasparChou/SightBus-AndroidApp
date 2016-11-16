@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void selfDestruct(View view) {
 
-        Intent intent = new Intent(getApplicationContext(), SecActivity.class);
+        Intent intent = new Intent(getApplicationContext(), EstimateRoutesActivity.class);
         startActivity(intent);
 
     }
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void openSearchStops(View view){
 
-        Intent intent = new Intent(getApplicationContext(), SearchStops.class);
+        Intent intent = new Intent(getApplicationContext(), SearchRoutes.class);
         startActivity(intent);
 
     }

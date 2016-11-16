@@ -11,6 +11,7 @@ import com.google.android.gms.maps.model.Marker;
 import java.util.HashMap;
 import java.util.Map;
 
+import tenoz.lab.sightbus.MapActivity;
 import tenoz.lab.sightbus.StopsActivity;
 
 /**
@@ -21,16 +22,15 @@ public class MapMarker implements GoogleMap.OnMarkerClickListener, GoogleMap.OnI
 
     private MapLocationListeners listener;
     private GoogleMap map;
-    private Activity activity;
+    private MapActivity activity;
     private Context context;
     public Map<String, String> markers = new HashMap<String, String>();
+    public Map<String, Integer> ids = new HashMap<String, Integer>();
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-
         return false;
     }
-
 
     public void setContext(Context context) {
         this.context = context;
@@ -39,7 +39,7 @@ public class MapMarker implements GoogleMap.OnMarkerClickListener, GoogleMap.OnI
         this.listener = listener;
     }
     public void setActivity(Activity activity) {
-        this.activity = activity;
+        this.activity = (MapActivity)activity;
     }
 
     public void setMap(GoogleMap map) {
@@ -49,10 +49,16 @@ public class MapMarker implements GoogleMap.OnMarkerClickListener, GoogleMap.OnI
     @Override
     public void onInfoWindowClick(Marker marker) {
         try {
+            StopMarker stop = this.activity.getNearbyStops().get(marker.getId());
+            Intent stopActivity = new Intent(this.activity, StopsActivity.class);
+            stopActivity.putExtra("Title@Actionbar", stop.name);
+            stopActivity.putExtra("StopID", stop.stopid);
+
             Log.i("Marker", marker.getId() + ", Clicked: " + markers.get(marker.getId()));
-            Intent stop = new Intent(this.activity, StopsActivity.class);
-            stop.putExtra("Title@Actionbar", markers.get(marker.getId()));
-            this.activity.startActivity(stop);
+            Log.i("ID:" ,   marker.getId());
+            Log.i("Name:", stop.name);
+            Log.i("SID:",   stop.stopid+"");
+            this.activity.startActivity(stopActivity);
         } catch ( NullPointerException e ){
 
         }
