@@ -26,6 +26,7 @@ import tenoz.lab.sightbus.EstimateRoutesActivity;
 public class APIEstimateRoute extends AsyncTask<Activity,Integer,String>{
 
     String fetch = "";
+    String queryRouteid = "";
     EstimateRoutesActivity activity = null;
     List<Map<String,String>> routesGoList = new ArrayList<Map<String, String>>();
     List<Map<String,String>> routesBackList = new ArrayList<Map<String, String>>();
@@ -33,6 +34,7 @@ public class APIEstimateRoute extends AsyncTask<Activity,Integer,String>{
     @Override
     protected String doInBackground(Activity... activity) {
         this.activity = (EstimateRoutesActivity) activity[0];
+        queryRouteid = this.activity.getRouteId();
         try {
             URL url = new URL("http://sightbus.tenoz.asia/routes/estimate?route="+this.activity.getRouteId().toString());
             Log.i("GET", url.toString());
@@ -61,8 +63,16 @@ public class APIEstimateRoute extends AsyncTask<Activity,Integer,String>{
     protected void onPostExecute(String msg) {
         super.onPostExecute(msg);
         Log.i("PostExec", fetch);
-        parser();
-        this.activity.setRoutesList( routesGoList, routesBackList );
+        if( queryRouteid != this.activity.getRouteId() ){
+            return;
+        }
+        try {
+            parser();
+            this.activity.setData(routesGoList, routesBackList);
+            this.activity.isDownloading = false;
+        } catch (NullPointerException e){
+
+        }
 //        ProgressBar bar = (ProgressBar) this.activity.findViewById( R.id.ProgressBar );
 //        bar.setVisibility(View.INVISIBLE);
     }
@@ -72,12 +82,18 @@ public class APIEstimateRoute extends AsyncTask<Activity,Integer,String>{
         try {
             JSONObject jsonRootObject = new JSONObject(fetch);
             JSONArray routes = jsonRootObject.optJSONArray("stops");
+            this.activity.setDestination(jsonRootObject.getString("destination"));
+            this.activity.setDeparture(jsonRootObject.getString("departure"));
             for( int i = 0; i < routes.length(); i++){
                 Map<String, String> datum = new HashMap<String, String>(2);
                 JSONObject stop = routes.getJSONObject(i);
                 datum.put("title",  stop.getString("name"));
-                int time = stop.getInt("time")/60;
-                datum.put("estimate",  (time < 10?" "+time:""+time) );
+                int time = stop.getInt("time");
+                String estimate = ( time == -99 )?"未發車":(
+                        time  < 100? "將到站":""+time/60
+                );
+
+                datum.put("estimate",  estimate );
                 if( stop.getInt("goBack") == 0){
                     routesGoList.add( datum );
                 } else if ( stop.getInt("goBack") == 1 ){

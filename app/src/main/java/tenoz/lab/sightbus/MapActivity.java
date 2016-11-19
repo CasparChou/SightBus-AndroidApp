@@ -103,7 +103,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void pinMarkers() {
-        addMarker( mapUtils.plusCode2Lat("7QQ32CMM+3WM"), "捷運輔大站" );
+//        addMarker( mapUtils.plusCode2Lat("7QQ32CMM+3WM"), "捷運輔大站" );
     }
 
     public void reloadStops(){

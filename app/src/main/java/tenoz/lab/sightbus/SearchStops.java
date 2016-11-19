@@ -25,7 +25,7 @@ import java.util.Map;
 
 import tenoz.lab.sightbus.http.Api;
 
-public class SearchRoutes extends AppCompatActivity {
+public class SearchStops extends AppCompatActivity {
 
     private ListView listView;
     private SimpleAdapter adapter;
@@ -37,7 +37,7 @@ public class SearchRoutes extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_stop);
-        getSupportActionBar().setTitle("尋找路線");
+        getSupportActionBar().setTitle("尋找站牌");
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x00DD00));
         listView = (ListView) findViewById( R.id.ResultsList );
         query = (EditText) findViewById(R.id.SearchBar);
@@ -48,7 +48,7 @@ public class SearchRoutes extends AppCompatActivity {
                 ProgressBar progressBar = (ProgressBar) findViewById(R.id.ProgressBar);
                 if( progressBar.getVisibility() == View.INVISIBLE ){
                     progressBar.setVisibility(View.VISIBLE);
-                    Api.searchRoutes(SearchRoutes.this);
+                    Api.searchRoutes(SearchStops.this);
                 }
             }
         });

@@ -33,7 +33,7 @@ public class APISearchRoutes extends AsyncTask<Activity,Integer,String>{
     String fetch = "";
     SearchRoutes activity = null;
     private List<Map<String, String>> routesList;
-    private Map<String, Integer> routesIds = new HashMap<String, Integer>();
+    private Map<String, String> routesIds = new HashMap<String, String>();
 
     @Override
     protected String doInBackground(Activity... activity) {
@@ -76,7 +76,7 @@ public class APISearchRoutes extends AsyncTask<Activity,Integer,String>{
 
     private void parser(){
         List<Map<String,String>> list = new ArrayList<Map<String, String>>();
-        Map<String, Integer> ids = new HashMap<String, Integer>();
+        Map<String, String> ids = new HashMap<String, String>();
         try {
             JSONObject jsonRootObject = new JSONObject(fetch);
             JSONArray routes = jsonRootObject.optJSONArray("routes");
@@ -85,7 +85,7 @@ public class APISearchRoutes extends AsyncTask<Activity,Integer,String>{
                 JSONObject route = routes.getJSONObject(i);
                 datum.put("title",  route.getString("name"));
                 datum.put("goto",  route.getString("departure") + " - " + route.getString("destination"));
-                ids.put(route.getString("name"), route.getInt("id"));
+                ids.put(route.getString("name"), route.getString("id"));
                 list.add( datum );
             }
             this.routesIds = ids;
