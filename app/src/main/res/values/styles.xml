@@ -8,12 +8,14 @@
         <!--<item name="colorAccent">@color/colorAccent</item>-->
         <item name="colorPrimary">#fb8c00 </item>
         <item name="colorPrimaryDark">#ef6c00 </item>
-            <item name="colorAccent">#ffab40 </item>
+        <item name="colorAccent">#ffab40 </item>
+        <item name="android:windowBackground">@drawable/cornor_theme_orange</item>
     </style>
     <style name="DefaultEditText" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">#ef6c00</item>
         <item name="colorControlActivated">#ff9800</item>
     </style>
+
 
 
 </resources>

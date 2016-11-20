@@ -2,7 +2,10 @@
     <string name="app_name">SightBus</string>
     <string name="main_activity_btn">T-Button</string>
     <string name="sec_text">The Sceond</string>
-    <string name="main_activity_go_map_btn">Open Map</string>
-    <string name="main_activity_search_stop_btn">Search Stops</string>
+    <string name="main_activity_go_map_btn">附近站牌</string>
+    <string name="main_activity_search_route_btn">路線公車</string>
     <string name="Search">搜尋</string>
+    <string name="main_favirote">常用站牌</string>
+    <string name="searching_routes">尋找路線</string>
+    <string name="searching_stops">尋找站牌</string>
 </resources>

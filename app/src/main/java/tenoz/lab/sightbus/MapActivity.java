@@ -148,7 +148,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             for( int i = 0; i < allStops.length(); i++){
                 JSONObject stop = allStops.getJSONObject(i);
                 StopMarker stopMark = new StopMarker(
-                        stop.getInt("id"),
+                        stop.getString("id"),
                         false, //stop.getInt("goBack")
                         stop.getString("name"),
                         new LatLng(

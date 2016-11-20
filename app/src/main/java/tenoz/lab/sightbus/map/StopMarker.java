@@ -7,11 +7,11 @@ import com.google.android.gms.maps.model.LatLng;
  */
 
 public class StopMarker {
-    public Integer stopid;
+    public String stopid;
     public Boolean goBack;
     public String name;
     public LatLng latlng;
-    public StopMarker( Integer id, Boolean back, String _name, LatLng _latlng ){
+    public StopMarker( String id, Boolean back, String _name, LatLng _latlng ){
         this.stopid = id;
         this.goBack = back;
         this.name = _name;

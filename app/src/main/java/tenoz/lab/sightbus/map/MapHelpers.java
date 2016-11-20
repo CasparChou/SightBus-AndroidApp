@@ -47,7 +47,7 @@ public class MapHelpers {
     public void moveCamera(LatLng latLng){
 
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16);
-        map.animateCamera(cameraUpdate);
+        map.moveCamera(cameraUpdate);
         if( !checkPermission() ) return;
         locationManager.removeUpdates(this.listener);
         this.activity.reloadStops();

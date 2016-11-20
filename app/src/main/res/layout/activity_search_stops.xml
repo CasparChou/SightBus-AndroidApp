@@ -10,21 +10,21 @@
     android:paddingRight="0dp"
     android:paddingTop="0dp"
 
-    tools:context="tenoz.lab.sightbus.SearchRoutes">
+    tools:context="tenoz.lab.sightbus.SearchStops">
 
     <ListView
-        android:id="@+id/ResultsList"
+        android:id="@+id/SearchStops_ResultsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:dividerHeight="0dp"
         android:divider="@android:color/transparent"
-        android:layout_below="@+id/SearchBar" />
+        android:layout_below="@+id/SearchStops_SearchBar" />
 
     <ProgressBar
         style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-        android:id="@+id/ProgressBar"
+        android:id="@+id/SearchStops_ProgressBar"
         android:layout_width="match_parent"
         android:layout_height="8dp"
         android:indeterminate="true"
@@ -32,7 +32,7 @@
         android:layout_alignParentTop="true" />
 
     <EditText
-        android:id="@+id/SearchBar"
+        android:id="@+id/SearchStops_SearchBar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:theme="@style/DefaultEditText"
@@ -41,18 +41,9 @@
         style="@style/Widget.AppCompat.AutoCompleteTextView"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/SearchBtn"
-        android:layout_marginLeft="10dp" />
-
-    <Button
-        android:id="@+id/SearchBtn"
-        android:background="@drawable/search_circular_button"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="5dp"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        />
+        android:layout_marginLeft="10dp"
+        android:textAlignment="center"
+        android:layout_marginRight="10dp"
+        android:imeOptions="actionSearch" />
 
 </RelativeLayout>

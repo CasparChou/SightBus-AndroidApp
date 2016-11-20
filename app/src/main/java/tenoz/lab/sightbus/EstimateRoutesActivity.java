@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
@@ -67,6 +69,13 @@ public class EstimateRoutesActivity extends AppCompatActivity{
         progress = (ProgressBar) (findViewById(R.id.Estimate_ProgressBar));
         progress.setMax(160);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x00DD00));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.argb(255,251,140,0));
+        }
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -78,11 +87,13 @@ public class EstimateRoutesActivity extends AppCompatActivity{
                 switch (position){
                     case 0:
                         currentFragment = fragRouteGo;
-                        getSupportActionBar().setTitle( routeName + " 往" + destination );
+                        getSupportActionBar().setTitle( routeName );
+                        getSupportActionBar().setSubtitle( "往" + destination );
                         break;
                     case 1:
                         currentFragment = fragRouteBack;
-                        getSupportActionBar().setTitle( routeName + " 往" + departure );
+                        getSupportActionBar().setTitle( routeName );
+                        getSupportActionBar().setSubtitle( "往" + departure );
                         break;
 
                 }
@@ -180,10 +191,29 @@ public class EstimateRoutesActivity extends AppCompatActivity{
                     if(title.getText() == "未發車" ){
                         title.setTextColor(Color.argb(255,80,80,80));
                     }
+                    title.setBackgroundColor(Color.argb(0,255,255,255));
+                    timeText.setBackgroundColor(Color.argb(0,255,255,255));
                     title.setPadding(0,25,0,0);
                 } else {
-                    title.setPadding(0,0,0,0);
+                    title.setPadding(0,0,0,5);
                     timeText.setText("分鐘");
+                    if( Integer.valueOf(title.getText().toString()) >= 10 && Integer.valueOf(title.getText().toString()) < 20 ) {
+                        title.setTextColor(Color.argb(255,255,255,255));
+                        title.setBackgroundColor(Color.argb(255,27,94,32));
+                        timeText.setTextColor(Color.argb(255,255,255,255));
+                        timeText.setBackgroundColor(Color.argb(255,27,94,32));
+                    } else if( Integer.valueOf(title.getText().toString()) >= 20 ){
+                        title.setTextColor(Color.argb(255,255,255,255));
+                        title.setBackgroundColor(Color.argb(255,66,66,66));
+                        timeText.setTextColor(Color.argb(255,255,255,255));
+                        timeText.setBackgroundColor(Color.argb(255,66,66,66));
+                    } else {
+                        title.setTextColor(Color.argb(255,255,255,255));
+                        title.setBackgroundColor(Color.argb(255,76,175,180));
+                        timeText.setTextColor(Color.argb(255,255,255,255));
+                        timeText.setBackgroundColor(Color.argb(255,76,175,180));
+                    }
+
                 }
                 timeText.setTextColor(Color.GRAY);
                 timeText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -329,7 +359,8 @@ public class EstimateRoutesActivity extends AppCompatActivity{
     public void setDestination(String destination){
         this.destination = destination;
         if( isFirst ){
-            getSupportActionBar().setTitle( routeName + " 往" + destination );
+            getSupportActionBar().setTitle( routeName );
+            getSupportActionBar().setSubtitle( "往" + destination );
         }
     }
     public void setDeparture(String departure){

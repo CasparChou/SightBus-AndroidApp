@@ -102,6 +102,8 @@ public class APIEstimateRoute extends AsyncTask<Activity,Integer,String>{
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (NullPointerException e){
+            this.activity.finish();
         }
     }
 }
