@@ -8,4 +8,5 @@
     <string name="main_favirote">常用站牌</string>
     <string name="searching_routes">尋找路線</string>
     <string name="searching_stops">尋找站牌</string>
+    <string name="the_nearest_hint">距離最近的站牌</string>
 </resources>

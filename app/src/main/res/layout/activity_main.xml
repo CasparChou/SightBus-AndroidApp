@@ -2,13 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context="tenoz.lab.sightbus.MainActivity"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    tools:context="tenoz.lab.sightbus.MainActivity"
-    android:theme="@style/AppTheme"
-    android:background="#483c36">
+    android:theme="@style/AppHomeTheme">
 
 
     <LinearLayout
@@ -29,8 +27,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/icon_transparent"
-                android:id="@+id/imageView5"
-                android:layout_marginTop="60dp" />
+                android:layout_marginTop="60dp"
+                android:id="@+id/main_logo" />
+
+            <TextView
+                android:text="@string/the_nearest_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:paddingTop="20dp"
+                android:id="@+id/main_nearest_hint_text" />
+
+            <Button
+                android:text="讀取中))"
+                android:textAllCaps="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textColor="#8a000000"
+                android:background="?attr/colorPrimary"
+                android:id="@+id/main_nearest_btn"
+                style="@style/Widget.AppCompat.Button.Borderless" />
         </LinearLayout>
 
         <LinearLayout
@@ -50,13 +68,12 @@
                     android:src="@drawable/nearby"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:id="@+id/button9"
                     android:layout_weight="0.25"
                     android:theme="@style/AppTheme"
                     android:onClick="openMap"
                     android:background="@android:color/white"
                     android:textSize="20sp"
-                    />
+                    android:id="@+id/main_nearby_btn" />
 
                 <ImageButton
                     android:src="@drawable/favorite"
@@ -64,7 +81,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.25"
                     android:background="@android:color/white"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp"
+                    android:id="@+id/main_faviorate_btn" />
             </LinearLayout>
 
             <LinearLayout
@@ -78,21 +96,21 @@
                     android:src="@drawable/search_routes"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:id="@+id/button11"
                     android:layout_weight="0.25"
                     android:background="@android:color/white"
                     android:onClick="openSearchRoutes"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp"
+                    android:id="@+id/main_search_route_btn" />
 
                 <ImageButton
                     android:src="@drawable/search_stop"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:id="@+id/button12"
                     android:layout_weight="0.25"
                     android:background="@android:color/white"
                     android:onClick="openSearchStops"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp"
+                    android:id="@+id/main_search_stop_btn" />
             </LinearLayout>
 
         </LinearLayout>

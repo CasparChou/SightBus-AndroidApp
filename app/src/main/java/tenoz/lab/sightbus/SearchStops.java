@@ -1,14 +1,14 @@
 package tenoz.lab.sightbus;
 
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -16,35 +16,35 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.commonsware.cwac.merge.MergeAdapter;
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
+import tenoz.lab.sightbus.data.StopsList;
+import tenoz.lab.sightbus.data.StopsListAdapter;
 import tenoz.lab.sightbus.http.Api;
 
 public class SearchStops extends AppCompatActivity {
 
     private ListView listView;
-    private SimpleAdapter adapter;
-    private List<Map<String,String>> routesList = new ArrayList<Map<String, String>>();
     private EditText query;
     private String currentQuering = "";
     private int cwnd = 0;
+    private ArrayList<StopsList> stopsLists;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_stops);
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-        getSupportActionBar().setTitle("尋找站牌");
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x00DD00));
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.actionbar_search_stops);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setBackgroundDrawable(ContextCompat.getDrawable(this, R.color.colorPrimary));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(0);
+        final Drawable homeIcon = ContextCompat.getDrawable(this,R.drawable.abc_ic_ab_back_material);
+        homeIcon.setColorFilter(ContextCompat.getColor(this,R.color.defaultGray), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(homeIcon);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -68,7 +68,7 @@ public class SearchStops extends AppCompatActivity {
                                         cwnd++;
                                         currentQuering = query.getText().toString();
                                         ProgressBar progressBar = (ProgressBar) findViewById(R.id.SearchStops_ProgressBar);
-                                        getSupportActionBar().setTitle("尋找中...");
+                                        ((TextView)(findViewById(R.id.SearchStops_Title))).setText("尋找中...");
                                         progressBar.setVisibility(View.VISIBLE);
                                         Api.searchStops(SearchStops.this);
                                     }
@@ -106,39 +106,8 @@ public class SearchStops extends AppCompatActivity {
     }
 
     public void jobsDone(){
-        getSupportActionBar().setTitle("尋找站牌");
+        ((TextView)(findViewById(R.id.SearchStops_Title))).setText("尋找站牌");
         cwnd--;
-    }
-    public void setRoutesList(List<Map<String, String>> routesList) {
-        this.routesList = routesList;
-        adapter = new SimpleAdapter(
-                this,
-                routesList,
-                android.R.layout.simple_list_item_2,
-                new String[] {"stop", "routes"},
-                new int[] {android.R.id.text1,android.R.id.text2}
-        ){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent){
-                View view = super.getView(position, convertView, parent);
-                TextView title = (TextView) view.findViewById(android.R.id.text1);
-                title.setTextSize(20);
-
-                TextView timeText = (TextView) view.findViewById(android.R.id.text2);
-                title.setTextColor(Color.BLACK);
-                timeText.setTextColor(Color.GRAY);
-                return view;
-            }
-        };
-        try {
-            MergeAdapter mergeAdapter = new MergeAdapter();
-            mergeAdapter.addAdapter(adapter);
-
-            listView.setAdapter(mergeAdapter);
-        }catch (NullPointerException e){
-            Toast.makeText(getApplicationContext(), "應用程式錯誤", Toast.LENGTH_LONG);
-            this.finish();
-        }
     }
 
 
@@ -148,4 +117,15 @@ public class SearchStops extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
+    public void setStopsList(ArrayList<StopsList> stopsLists) {
+        this.stopsLists = stopsLists;
+        try {
+            StopsListAdapter adapter = new StopsListAdapter(this, stopsLists);
+            ListView listView = (ListView) findViewById(R.id.SearchStops_ResultsList);
+            listView.setAdapter(adapter);
+        }catch (NullPointerException e){
+            Toast.makeText(getApplicationContext(), "應用程式錯誤", Toast.LENGTH_LONG);
+            this.finish();
+        }
+    }
 }

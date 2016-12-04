@@ -36,7 +36,7 @@ public class APIEstimateRoute extends AsyncTask<Activity,Integer,String>{
         this.activity = (EstimateRoutesActivity) activity[0];
         queryRouteid = this.activity.getRouteId();
         try {
-            URL url = new URL("http://sightbus.tenoz.asia/routes/estimate?route="+this.activity.getRouteId().toString());
+            URL url = new URL("http://sightbus.tenoz.asia/routes/estimate/?route="+this.activity.getRouteId().toString());
             Log.i("GET", url.toString());
             URLConnection conn = url.openConnection();
             InputStream in = conn.getInputStream();
@@ -88,10 +88,12 @@ public class APIEstimateRoute extends AsyncTask<Activity,Integer,String>{
                 Map<String, String> datum = new HashMap<String, String>(2);
                 JSONObject stop = routes.getJSONObject(i);
                 datum.put("title",  stop.getString("name"));
-                int time = stop.getInt("time");
-                String estimate = ( time == -99 )?"未發車":(
-                        time  < 100? "將到站":""+time/60
-                );
+                int time = Integer.parseInt(stop.getString("time"));
+                int update = Integer.parseInt(stop.getString("update"));
+                int event =  stop.optInt("event",-1);
+                Log.i("ESTI", stop.getString("seq")+":"+time+":"+stop.getString("name")+":"+event);
+
+                String estimate = estimateTime(time, update, event);
 
                 datum.put("estimate",  estimate );
                 if( stop.getInt("goBack") == 0){
@@ -105,5 +107,33 @@ public class APIEstimateRoute extends AsyncTask<Activity,Integer,String>{
         } catch (NullPointerException e){
             this.activity.finish();
         }
+    }
+
+
+
+    private String estimateTime( int countdown, int update, int event){
+
+        long now = System.currentTimeMillis()/1000;
+        long newtime = (countdown - (now - update));
+        if( event != -1){
+            if ( event == 0){
+                return "已離站";
+            } else {
+                return "進站中";
+            }
+        }
+        if( countdown < 0 ){
+            return "未發車";
+        }
+        if (newtime < 0){
+            return "已離站";
+        }
+//        if( newtime < 60 ){
+//            return "將到站";
+//        }
+        if( newtime < 100 ){
+            return "小於" + newtime +"秒";
+        }
+        return newtime/60 + "";
     }
 }

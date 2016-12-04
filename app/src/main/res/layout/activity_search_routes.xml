@@ -2,49 +2,76 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_search_stop"
+    android:id="@+id/activity_search_routes"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="0dp"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
-
     tools:context="tenoz.lab.sightbus.SearchRoutes">
 
-    <ListView
-        android:id="@+id/SearchRoutes_ResultsList"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:dividerHeight="0dp"
-        android:divider="@android:color/transparent"
-        android:layout_below="@+id/SearchRoutes_SearchBar" />
+        android:layout_marginTop="0dp"
+        android:orientation="vertical">
 
-    <ProgressBar
-        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-        android:id="@+id/SearchRoutes_ProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:indeterminate="true"
-        android:visibility="invisible"
-        android:layout_alignParentTop="true" />
+        <ProgressBar
+            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+            android:id="@+id/SearchRoutes_ProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            android:layout_alignParentTop="true" />
 
-    <EditText
-        android:id="@+id/SearchRoutes_SearchBar"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:theme="@style/DefaultEditText"
-        android:singleLine="true"
-        android:selectAllOnFocus="true"
-        style="@style/Widget.AppCompat.AutoCompleteTextView"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="10dp"
-        android:textAlignment="center"
-        android:layout_marginRight="10dp"
-        android:imeOptions="actionSearch"
-        />
+        <LinearLayout
+            android:layout_marginTop="-9dp"
+            android:elevation="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:background="@color/colorPrimary"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/SearchRoutes_Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp"
+                android:paddingBottom="40dp"
+                android:textSize="30dp"
+                android:textAlignment="center"
+                android:text="@string/searching_routes"
+                android:textColor="?android:attr/textColorTertiary" />
+            <EditText
+                android:id="@+id/SearchRoutes_SearchBar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="10dp"
+                android:elevation="3dp"
+                android:theme="@style/DefaultEditText"
+                android:background="@drawable/edittext"
+                android:selectAllOnFocus="true"
+                android:textAlignment="center"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                />
 
+        </LinearLayout>
+        <ListView
+            android:id="@+id/SearchRoutes_ResultsList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:paddingTop="20dp"
+            android:dividerHeight="0dp"
+            android:divider="@android:color/transparent"
+            android:layout_below="@+id/SearchRoutes_SearchBar" />
+
+    </LinearLayout>
 </RelativeLayout>

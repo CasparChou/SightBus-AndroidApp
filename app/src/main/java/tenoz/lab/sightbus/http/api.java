@@ -4,9 +4,10 @@ import android.app.Activity;
 import android.os.AsyncTask;
 
 import tenoz.lab.sightbus.http.async.APIEstimateRoute;
+import tenoz.lab.sightbus.http.async.APINearestStop;
 import tenoz.lab.sightbus.http.async.APISearchRoutes;
 import tenoz.lab.sightbus.http.async.APISearchStops;
-import tenoz.lab.sightbus.http.async.Routes;
+import tenoz.lab.sightbus.http.async.APIRoutesAtStop;
 import tenoz.lab.sightbus.http.async.Stops;
 
 /**
@@ -16,9 +17,9 @@ import tenoz.lab.sightbus.http.async.Stops;
 public class Api {
     private static AsyncTask<Activity,Integer,String> apiTask;
 
-    public static void getRoutes(Activity activity)
+    public static void getRoutesAtStops(Activity activity)
     {
-        apiTask = new Routes();
+        apiTask = new APIRoutesAtStop();
         apiTask.execute(activity,null,null);
     }
 
@@ -43,5 +44,11 @@ public class Api {
     public static void getEstimateRoute(Activity activity) {
         apiTask = new APIEstimateRoute();
         apiTask.execute(activity,null,null);
+    }
+
+    public static void getNearest(Activity activity) {
+        apiTask = new APINearestStop();
+        apiTask.execute(activity,null,null);
+
     }
 }

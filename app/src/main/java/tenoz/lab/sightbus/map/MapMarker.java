@@ -29,6 +29,8 @@ public class MapMarker implements GoogleMap.OnMarkerClickListener, GoogleMap.OnI
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        Log.i("Marker.title", marker.getTitle());
+        Log.i("Marker.snippet", marker.getSnippet());
         return false;
     }
 

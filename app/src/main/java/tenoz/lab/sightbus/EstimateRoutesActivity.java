@@ -67,7 +67,7 @@ public class EstimateRoutesActivity extends AppCompatActivity{
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setAdapter(new CustomAdapter(getSupportFragmentManager(), getApplicationContext()));
         progress = (ProgressBar) (findViewById(R.id.Estimate_ProgressBar));
-        progress.setMax(160);
+        progress.setMax(80);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x00DD00));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -108,8 +108,8 @@ public class EstimateRoutesActivity extends AppCompatActivity{
         Api.getEstimateRoute(this);
 
         new Timer().scheduleAtFixedRate(new TimerTask(){
-            @Override
-            public void run(){
+                @Override
+                public void run(){
                 if( isDownloading ){
                     return;
                 }
@@ -119,9 +119,9 @@ public class EstimateRoutesActivity extends AppCompatActivity{
                     Api.getEstimateRoute(EstimateRoutesActivity.this);
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    progress.setProgress(++current%161, true);
+                    progress.setProgress(++current%81, true);
                 } else {
-                    progress.setProgress(++current%161);
+                    progress.setProgress(++current%81);
                 }
             }
         },0,62);
@@ -185,11 +185,19 @@ public class EstimateRoutesActivity extends AppCompatActivity{
                 title.setHeight(100);
 
                 TextView timeText = (TextView) view.findViewById(android.R.id.text2);
-                if( title.getText() == "未發車" ||  title.getText() == "將到站"   ){
+                String text = title.getText().toString();
+                if( title.getText().toString().startsWith("小於") ||title.getText() == "未發車" ||  title.getText() == "將到站" || title.getText() == "已離站"  || title.getText() == "進站中"  ){
                     timeText.setText("");
                     title.setTextSize(18);
                     if(title.getText() == "未發車" ){
                         title.setTextColor(Color.argb(255,80,80,80));
+                    } else if ( title.getText() == "已離站" ){
+                        title.setTextColor(Color.argb(255,250,80,80));
+
+                    } else if ( title.getText() == "進站中" ){
+                        title.setTextColor(Color.argb(255,250,143,80));
+                    } else {
+                        title.setTextColor(Color.argb(255,80,80,250));
                     }
                     title.setBackgroundColor(Color.argb(0,255,255,255));
                     timeText.setBackgroundColor(Color.argb(0,255,255,255));
@@ -325,13 +333,13 @@ public class EstimateRoutesActivity extends AppCompatActivity{
                 }
                 try {
 
-                    Log.i("LIST", i + ":" + estimate_go.getCount() + "--" +
-                            ((TextView) estimate_go.getAdapter().getView(i, null, estimate_go).findViewById(android.R.id.text1)).getText()+":"+
-                            ((TextView) stops_go.getAdapter().getView(i, null, estimate_go).findViewById(android.R.id.text1)).getText()+
-                            "----------------"+
-                            item.get("estimate").toString()+"-------"+
-                            item.get("title").toString()
-                    );
+//                    Log.i("LIST", i + ":" + estimate_go.getCount() + "--" +
+//                            ((TextView) estimate_go.getAdapter().getView(i, null, estimate_go).findViewById(android.R.id.text1)).getText()+":"+
+//                            ((TextView) stops_go.getAdapter().getView(i, null, estimate_go).findViewById(android.R.id.text1)).getText()+
+//                            "----------------"+
+//                            item.get("estimate").toString()+"-------"+
+//                            item.get("title").toString()
+//                    );
 //                    ((TextView) estimate_go.getAdapter().getView(i, null, estimate_go).findViewById(android.R.id.text1)).setText(item.get("estimate"));
 //                    ((TextView) stops_go.getAdapter().getView(i, null, estimate_go).findViewById(android.R.id.text1)).setText(item.get("title"));
 //                    estimate_go.getAdapter().getView(i, null, estimate_go).invalidate();

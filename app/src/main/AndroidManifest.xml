@@ -24,7 +24,7 @@
         <activity android:name=".SecActivity" />
         <activity
             android:name=".SearchRoutes"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".SearchStops"
             android:theme="@style/Theme.AppCompat.Light" />

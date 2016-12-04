@@ -2,14 +2,15 @@ package tenoz.lab.sightbus;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -22,20 +23,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TwoLineListItem;
 
-import com.commonsware.cwac.merge.MergeAdapter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import tenoz.lab.sightbus.data.RoutesList;
+import tenoz.lab.sightbus.data.RoutesListAdapter;
 import tenoz.lab.sightbus.http.Api;
 
 public class SearchRoutes extends AppCompatActivity {
 
     private ListView listView;
     private SimpleAdapter adapter;
-    private List<Map<String,String>> routesList = new ArrayList<Map<String, String>>();
+    private ArrayList<RoutesList> routesList = new ArrayList<RoutesList>();
     private Map<String,String> routesIds = new HashMap<String, String>();
     private EditText query;
     private String currentQuering = "";
@@ -45,10 +45,14 @@ public class SearchRoutes extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_routes);
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-        getSupportActionBar().setTitle("尋找路線");
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x00DD00));
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.actionbar_search_routes);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setBackgroundDrawable(ContextCompat.getDrawable(this, R.color.colorPrimary));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(0);
+        final Drawable homeIcon = ContextCompat.getDrawable(this,R.drawable.abc_ic_ab_back_material);
+        homeIcon.setColorFilter(ContextCompat.getColor(this,R.color.defaultGray), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(homeIcon);
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -71,7 +75,7 @@ public class SearchRoutes extends AppCompatActivity {
                                         cwnd++;
                                         currentQuering = query.getText().toString();
                                         ProgressBar progressBar = (ProgressBar) findViewById(R.id.SearchRoutes_ProgressBar);
-                                        getSupportActionBar().setTitle("尋找中...");
+                                        ((TextView)(findViewById(R.id.SearchRoutes_Title))).setText("尋找中...");
                                         progressBar.setVisibility(View.VISIBLE);
                                         Api.searchRoutes(SearchRoutes.this);
                                     }
@@ -103,53 +107,43 @@ public class SearchRoutes extends AppCompatActivity {
             }
         });
     }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
 
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     public String getQuery(){
         return query.getText().toString();
     }
 
     public void setRoutesIds(Map<String, String> ids){
         routesIds = ids;
-        getSupportActionBar().setTitle("尋找路線");
+        ((TextView)(findViewById(R.id.SearchRoutes_Title))).setText("尋找路線");
         cwnd--;
     }
-    public void setRoutesList(List<Map<String, String>> routesList) {
-        this.routesList = routesList;
-        adapter = new SimpleAdapter(
-                this,
-                routesList,
-                android.R.layout.simple_list_item_2,
-                new String[] {"title", "goto"},
-                new int[] {android.R.id.text1,android.R.id.text2}
-        ){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent){
-                View view = super.getView(position, convertView, parent);
-                TextView title = (TextView) view.findViewById(android.R.id.text1);
-                title.setTextSize(20);
-
-                TextView timeText = (TextView) view.findViewById(android.R.id.text2);
-                title.setTextColor(Color.BLACK);
-                timeText.setTextColor(Color.GRAY);
-                return view;
-            }
-        };
-        try {
-            MergeAdapter mergeAdapter = new MergeAdapter();
-            mergeAdapter.addAdapter(adapter);
-
-            listView.setAdapter(mergeAdapter);
-        }catch (NullPointerException e){
-            Toast.makeText(getApplicationContext(), "應用程式錯誤", Toast.LENGTH_LONG);
-            this.finish();
-        }
-    }
-
 
     @Override
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
+
+    public void setRoutesList(ArrayList<RoutesList> routesList) {
+        this.routesList = routesList;
+        try {
+            RoutesListAdapter adapter = new RoutesListAdapter(this, routesList);
+            ListView listView = (ListView) findViewById(R.id.SearchRoutes_ResultsList);
+            listView.setAdapter(adapter);
+        }catch (NullPointerException e){
+            Toast.makeText(getApplicationContext(), "應用程式錯誤", Toast.LENGTH_LONG);
+            this.finish();
+        }
     }
 
 }

@@ -18,11 +18,11 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import tenoz.lab.sightbus.R;
 import tenoz.lab.sightbus.SearchRoutes;
+import tenoz.lab.sightbus.data.RoutesList;
 
 /**
  * Created by AppleCaspar on 2016/10/24.
@@ -32,7 +32,7 @@ public class APISearchRoutes extends AsyncTask<Activity,Integer,String>{
 
     String fetch = "";
     SearchRoutes activity = null;
-    private List<Map<String, String>> routesList;
+    private ArrayList<RoutesList> routesList = new ArrayList<RoutesList>();
     private Map<String, String> routesIds = new HashMap<String, String>();
 
     @Override
@@ -40,7 +40,7 @@ public class APISearchRoutes extends AsyncTask<Activity,Integer,String>{
         this.activity = (SearchRoutes) activity[0];
         try {
             EditText query = (EditText)this.activity.findViewById(R.id.SearchRoutes_SearchBar);
-            URL url = new URL("http://sightbus.tenoz.asia/routes/search?query=" + URLEncoder.encode(this.activity.getQuery(), "utf-8"));
+            URL url = new URL("http://sightbus.tenoz.asia/routes/search/?query=" + URLEncoder.encode(this.activity.getQuery(), "utf-8"));
             URLConnection conn = url.openConnection();
             InputStream in = conn.getInputStream();
             int data = in.read();
@@ -75,18 +75,15 @@ public class APISearchRoutes extends AsyncTask<Activity,Integer,String>{
 
 
     private void parser(){
-        List<Map<String,String>> list = new ArrayList<Map<String, String>>();
+        ArrayList<RoutesList> list = new ArrayList<RoutesList>();
         Map<String, String> ids = new HashMap<String, String>();
         try {
             JSONObject jsonRootObject = new JSONObject(fetch);
             JSONArray routes = jsonRootObject.optJSONArray("routes");
             for( int i = 0; i < routes.length(); i++){
-                Map<String, String> datum = new HashMap<String, String>(2);
                 JSONObject route = routes.getJSONObject(i);
-                datum.put("title",  route.getString("name"));
-                datum.put("goto",  route.getString("departure") + " - " + route.getString("destination"));
+                list.add(new RoutesList(route.getString("id"),route.getString("name"),route.getString("departure"),route.getString("destination")));
                 ids.put(route.getString("name"), route.getString("id"));
-                list.add( datum );
             }
             this.routesIds = ids;
             this.routesList = list;

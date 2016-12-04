@@ -26,16 +26,18 @@ import tenoz.lab.sightbus.StopsActivity;
  * Created by AppleCaspar on 2016/10/24.
  */
 
-public class Routes extends AsyncTask<Activity,Integer,String>{
+public class APIRoutesAtStop extends AsyncTask<Activity,Integer,String>{
 
     String fetch = "";
     StopsActivity activity = null;
+    String stop_id = "";
 
     @Override
     protected String doInBackground(Activity... activity) {
         this.activity = (StopsActivity) activity[0];
         try {
-            URL url = new URL("http://sightbus.tenoz.asia/stops/");
+            this.stop_id = this.activity.getIntent().getStringExtra("StopID");
+            URL url = new URL("http://sightbus.tenoz.asia/stops/estimate/?stop="+this.stop_id);
             URLConnection conn = url.openConnection();
             InputStream in = conn.getInputStream();
             int data = in.read();
@@ -48,6 +50,8 @@ public class Routes extends AsyncTask<Activity,Integer,String>{
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException e){
+            cancel(true);
         }
         return fetch;
     }
@@ -71,7 +75,7 @@ public class Routes extends AsyncTask<Activity,Integer,String>{
         List<Map<String,String>> routesList = new ArrayList<Map<String, String>>();
         try {
             JSONObject jsonRootObject = new JSONObject(fetch);
-            JSONArray routes = jsonRootObject.optJSONArray("route");
+            JSONArray routes = jsonRootObject.getJSONObject("results").optJSONArray("routes");
             for( int i = 0; i < routes.length(); i++){
                 Map<String, String> datum = new HashMap<String, String>(2);
                 datum.put("title",  routes.getString(i));

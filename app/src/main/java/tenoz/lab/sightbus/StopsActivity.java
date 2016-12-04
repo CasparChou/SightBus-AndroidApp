@@ -35,7 +35,7 @@ public class StopsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stops);
         Log.i("StopName", getIntent().getExtras().getString("Title@Actionbar"));
-        Log.i("StopID", getIntent().getExtras().getInt("StopID")+"");
+        Log.i("StopID", getIntent().getExtras().getString("StopID")+"");
         getSupportActionBar().setTitle(getIntent().getExtras().getString("Title@Actionbar"));
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x00DD00));
         listView = (ListView) findViewById( R.id.route_list );
@@ -65,7 +65,7 @@ public class StopsActivity extends AppCompatActivity {
     }
 
     private void loadList(){
-        Api.getRoutes(this);
+        Api.getRoutesAtStops(this);
 
     }
 

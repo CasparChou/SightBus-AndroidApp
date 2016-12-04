@@ -11,10 +11,12 @@ public class StopMarker {
     public Boolean goBack;
     public String name;
     public LatLng latlng;
-    public StopMarker( String id, Boolean back, String _name, LatLng _latlng ){
+    public StopMarker( String id, Boolean back, String _name,  String routes, LatLng _latlng ){
         this.stopid = id;
         this.goBack = back;
         this.name = _name;
         this.latlng = _latlng;
+        this.routes = routes;
     }
+    public String routes;
 }

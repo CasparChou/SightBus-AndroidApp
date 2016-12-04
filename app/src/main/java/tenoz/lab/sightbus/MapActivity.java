@@ -1,11 +1,14 @@
 package tenoz.lab.sightbus;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -73,6 +76,38 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         map.setOnInfoWindowClickListener(mapMarkerListeners);
         map.setOnCameraMoveStartedListener(mapListeners);
         map.setOnCameraIdleListener(mapListeners);
+        map.setMyLocationEnabled(true);
+
+
+        map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+            @Override
+            public View getInfoWindow(Marker marker)   {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                View v = getLayoutInflater().inflate(R.layout.layout_marker_infowindow, null);
+                TextView titleHidden = (TextView)  v.findViewById(R.id.marker_info_title_hidden);
+                if( marker.getTitle().length()*2 > marker.getSnippet().length()){
+                    titleHidden.setText(marker.getTitle());
+                } else {
+                    titleHidden.setText(marker.getSnippet());
+                }
+                titleHidden.setTextColor(Color.TRANSPARENT);
+                TextView title = (TextView)  v.findViewById(R.id.marker_info_title);
+                title.setText(marker.getTitle());
+                title.setTextColor(Color.BLACK);
+
+                TextView snippet = (TextView)  v.findViewById(R.id.marker_info_snippet);
+                snippet.setText(marker.getSnippet());
+                snippet.setTextColor(Color.GRAY);
+
+                return v;
+            }
+
+        });
 
         if( mapUtils.checkPermission() ){
             mapUtils.updateLocation();
@@ -115,7 +150,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
 
-    public Marker addMarker( LatLng latLng, String title ){
+    public Marker addMarker(LatLng latLng, String title, String stopid, String routes){
         BitmapDescriptor descriptor = (
                 BitmapDescriptorFactory.fromResource(
                         getResources().getIdentifier("marker", "drawable", getPackageName())
@@ -127,7 +162,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     .position( latLng )
                     .title( title )
                     .icon( descriptor )
-                    .snippet("開啟站牌")
+                    .snippet(routes)
             )
         );
     }
@@ -151,12 +186,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         stop.getString("id"),
                         false, //stop.getInt("goBack")
                         stop.getString("name"),
+                        stop.getString("routes"),
                         new LatLng(
                                 stop.getDouble("lat"),
                                 stop.getDouble("lng")
                         )
                 );
-                Marker mark = addMarker(stopMark.latlng, stopMark.name+":"+stopMark.stopid);
+                Marker mark = addMarker(stopMark.latlng, stopMark.name, stopMark.stopid, stopMark.routes);
                 nearbyStops.put(mark.getId(), stopMark );
             }
         } catch (JSONException e) {
