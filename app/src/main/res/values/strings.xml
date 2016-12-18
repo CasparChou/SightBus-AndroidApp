@@ -5,8 +5,14 @@
     <string name="main_activity_go_map_btn">附近站牌</string>
     <string name="main_activity_search_route_btn">路線公車</string>
     <string name="Search">搜尋</string>
-    <string name="main_favirote">常用站牌</string>
+    <string name="nearby_stops">附近站牌</string>
     <string name="searching_routes">尋找路線</string>
     <string name="searching_stops">尋找站牌</string>
     <string name="the_nearest_hint">距離最近的站牌</string>
+    <string name="SearchRoutes_NotFound">嗚嗚..\n沒有找到這個路線公車</string>
+    <string name="SearchStops_NotFound">嗚嗚..\n沒有找到這個站牌</string>
+    <string name="map_filter_text">篩選</string>
+    <string name="route_planning">行程規劃</string>
+    <string name="route_planning_dep">首先\n請選擇起始點</string>
+    <string name="route_planning_dst">接著\n請選擇目的地</string>
 </resources>

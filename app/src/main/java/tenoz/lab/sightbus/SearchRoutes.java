@@ -1,6 +1,7 @@
 package tenoz.lab.sightbus;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -8,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,9 +23,9 @@ import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.TwoLineListItem;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,8 +54,6 @@ public class SearchRoutes extends AppCompatActivity {
         final Drawable homeIcon = ContextCompat.getDrawable(this,R.drawable.abc_ic_ab_back_material);
         homeIcon.setColorFilter(ContextCompat.getColor(this,R.color.defaultGray), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(homeIcon);
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -62,7 +62,7 @@ public class SearchRoutes extends AppCompatActivity {
         }
         listView = (ListView) findViewById( R.id.SearchRoutes_ResultsList );
         query = (EditText) findViewById(R.id.SearchRoutes_SearchBar);
-        EditText editText = (EditText) findViewById(R.id.SearchRoutes_SearchBar);
+        final EditText editText = (EditText) findViewById(R.id.SearchRoutes_SearchBar);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -87,26 +87,73 @@ public class SearchRoutes extends AppCompatActivity {
                 return handled;
             }
         });
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-
+        editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String itemSelected = (String) ((TwoLineListItem) view).getText1().getText();
-                for( Map.Entry<String,String> i : routesIds.entrySet()){
-                    if( itemSelected.equals(i.getKey())){
-                        String routeId = i.getValue();
-                        Intent routeEstimate = new Intent(getApplicationContext(), EstimateRoutesActivity.class);
-                        routeEstimate.putExtra("Route ID", routeId);
-                        routeEstimate.putExtra("Route Name", i.getKey());
-                        startActivity(routeEstimate);
-                        break;
-                    }
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(editText.getText().toString().length() == 0){
+                    getCacheToList();
                 }
-
+                if (event.getAction()==KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    return true;
+                }
+                return false;
             }
         });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String name = ((RoutesList) parent.getAdapter().getItem(position)).name;
+                String route = ((RoutesList) parent.getAdapter().getItem(position)).routeid;
+                String drt = ((RoutesList) parent.getAdapter().getItem(position)).departure;
+                String dst = ((RoutesList) parent.getAdapter().getItem(position)).destination;
+
+                Intent routeEstimate = new Intent(getApplicationContext(), EstimateRoutesActivity.class);
+                routeEstimate.putExtra("Route ID", route);
+                routeEstimate.putExtra("Route Name", name);
+                routeEstimate.putExtra("Route Departure", drt);
+                routeEstimate.putExtra("Route Destination", dst);
+                String cache = route+":"+name+":"+drt+":"+dst+":";
+                SharedPreferences pref = getSharedPreferences("search.sightbus", MODE_PRIVATE);
+                String current = pref.getString("routes","");
+                Log.i("Current", current);
+                if(!current.contains(cache)){
+                    if(current.contains(";") && current.split(";").length > 5){
+                        String[] list = current.split(";");
+                        list = Arrays.copyOf(list, list.length-1);
+                        for( String item : list ){
+                            cache = cache+";"+item;
+                        }
+                    } else {
+                        cache = cache +";"+ current;
+                    }
+                } else {
+                    current = current.replaceFirst(cache+";?", "");
+                    cache = cache +";"+ current;
+                }
+                Log.i("Next", cache);
+                pref.edit().remove("routes").commit();
+                pref.edit().putString("routes",cache).commit();
+
+                startActivity(routeEstimate);
+            }
+        });
+        getCacheToList();
     }
+    private void getCacheToList() {
+        SharedPreferences pref = getSharedPreferences("search.sightbus", MODE_PRIVATE);
+        String current = pref.getString("routes","");
+        if( current.contains(";") ){
+            ArrayList <RoutesList> routesRecord = new ArrayList<>();
+            String[] list = current.split(";");
+            for( String item : list ){
+                String[] field = item.split(":");
+                routesRecord.add(new RoutesList(field[0],field[1],field[2],field[3]));
+            }
+            setRoutesList(routesRecord);
+        }
+    }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -136,10 +183,14 @@ public class SearchRoutes extends AppCompatActivity {
 
     public void setRoutesList(ArrayList<RoutesList> routesList) {
         this.routesList = routesList;
+        (findViewById(R.id.SearchRoutes_Not_Found)).setVisibility(View.INVISIBLE);
         try {
             RoutesListAdapter adapter = new RoutesListAdapter(this, routesList);
             ListView listView = (ListView) findViewById(R.id.SearchRoutes_ResultsList);
             listView.setAdapter(adapter);
+            if(routesList.size() == 0){
+                (findViewById(R.id.SearchRoutes_Not_Found)).setVisibility(View.VISIBLE);
+            }
         }catch (NullPointerException e){
             Toast.makeText(getApplicationContext(), "應用程式錯誤", Toast.LENGTH_LONG);
             this.finish();

@@ -1,7 +1,5 @@
 <resources>
 
-    <!-- Base application theme. -->
-
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">#fb8c00 </item>
         <item name="colorPrimaryDark">#ef6c00 </item>
@@ -16,6 +14,9 @@
         <item name="colorControlActivated">#ff9800</item>
     </style>
 
+    <style name="DefaultTabLayout" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <item name="android:textSize">18sp</item>
+    </style>
 
 
 

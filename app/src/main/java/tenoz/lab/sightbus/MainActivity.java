@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -19,8 +20,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.List;
-
-import tenoz.lab.sightbus.http.Api;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,14 +39,14 @@ public class MainActivity extends AppCompatActivity {
             window.setStatusBarColor(Color.argb(255,251,140,0));
         }
         if(checkPermission()){
-//            updateNearestBtn();
-//            new Timer().scheduleAtFixedRate(new TimerTask(){
-//                @Override
-//                public void run(){
-//                    Log.i("Refreshing","Nearest stop refreshing");
-//                    updateNearestBtn();
-//                }
-//            },0,10000);
+            updateNearestBtn();
+            new Timer().scheduleAtFixedRate(new TimerTask(){
+                @Override
+                public void run(){
+                    Log.i("Refreshing","Nearest stop refreshing");
+                    updateNearestBtn();
+                }
+            },0,10000);
         }
         ((Button)findViewById(R.id.main_nearest_btn)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void updateNearestBtn(){
-        updateLocation();
-        Api.getNearest(MainActivity.this);
+//        updateLocation();
+//        Api.getNearest(MainActivity.this);
     }
     private void requestPermission() {
         ActivityCompat.requestPermissions(this,
@@ -96,13 +97,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void selfDestruct(View view) {
-
-        Intent intent = new Intent(getApplicationContext(), EstimateRoutesActivity.class);
-        startActivity(intent);
-
-    }
-
     public void openMap(View view){
 
         Intent intent = new Intent(getApplicationContext(), MapActivity.class);
@@ -119,6 +113,13 @@ public class MainActivity extends AppCompatActivity {
     public void openSearchStops(View view){
 
         Intent intent = new Intent(getApplicationContext(), SearchStops.class);
+        startActivity(intent);
+
+    }
+
+    public void openRoutePlanning(View view){
+
+        Intent intent = new Intent(getApplicationContext(), RoutePlanner.class);
         startActivity(intent);
 
     }

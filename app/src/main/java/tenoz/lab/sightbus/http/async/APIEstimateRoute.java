@@ -13,11 +13,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import tenoz.lab.sightbus.EstimateRoutesActivity;
+import tenoz.lab.sightbus.data.EstimateList;
 
 /**
  * Created by AppleCaspar on 2016/10/24.
@@ -28,12 +26,15 @@ public class APIEstimateRoute extends AsyncTask<Activity,Integer,String>{
     String fetch = "";
     String queryRouteid = "";
     EstimateRoutesActivity activity = null;
-    List<Map<String,String>> routesGoList = new ArrayList<Map<String, String>>();
-    List<Map<String,String>> routesBackList = new ArrayList<Map<String, String>>();
+    ArrayList<EstimateList> routesGoList = new ArrayList<>();
+    ArrayList<EstimateList> routesBackList = new ArrayList<>();
 
     @Override
     protected String doInBackground(Activity... activity) {
         this.activity = (EstimateRoutesActivity) activity[0];
+        if( this.activity.isDestroyed() || this.activity.isDestroyed() ){
+            cancel(true);
+        }
         queryRouteid = this.activity.getRouteId();
         try {
             URL url = new URL("http://sightbus.tenoz.asia/routes/estimate/?route="+this.activity.getRouteId().toString());
@@ -57,6 +58,9 @@ public class APIEstimateRoute extends AsyncTask<Activity,Integer,String>{
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
+        if( this.activity.isDestroyed() || this.activity.isDestroyed() ){
+            cancel(true);
+        }
     }
 
     @Override
@@ -66,10 +70,12 @@ public class APIEstimateRoute extends AsyncTask<Activity,Integer,String>{
         if( queryRouteid != this.activity.getRouteId() ){
             return;
         }
+        if( this.activity.isDestroyed() || this.activity.isDestroyed() ){
+            cancel(true);
+            return;
+        }
         try {
             parser();
-            this.activity.setData(routesGoList, routesBackList);
-            this.activity.isDownloading = false;
         } catch (NullPointerException e){
 
         }
@@ -82,58 +88,42 @@ public class APIEstimateRoute extends AsyncTask<Activity,Integer,String>{
         try {
             JSONObject jsonRootObject = new JSONObject(fetch);
             JSONArray routes = jsonRootObject.optJSONArray("stops");
-            this.activity.setDestination(jsonRootObject.getString("destination"));
-            this.activity.setDeparture(jsonRootObject.getString("departure"));
             for( int i = 0; i < routes.length(); i++){
-                Map<String, String> datum = new HashMap<String, String>(2);
                 JSONObject stop = routes.getJSONObject(i);
-                datum.put("title",  stop.getString("name"));
-                int time = Integer.parseInt(stop.getString("time"));
-                int update = Integer.parseInt(stop.getString("update"));
-                int event =  stop.optInt("event",-1);
-                Log.i("ESTI", stop.getString("seq")+":"+time+":"+stop.getString("name")+":"+event);
+                Integer time = Integer.parseInt(stop.getString("time"));
+                Integer update = Integer.parseInt(stop.getString("update"));
+                Integer event =  stop.optInt("event",-1);
+                EstimateList data = new EstimateList(
+                        stop.getString("stop"),
+                        stop.getString("name"),
+                        stop.getInt("seq"),
+                        stop.getInt("goBack")==1?true:false,
+                        time,
+                        update,
+                        event,
+                        stop.getString("plate"),
+                        false,
+                        false
+                ) ;
 
-                String estimate = estimateTime(time, update, event);
-
-                datum.put("estimate",  estimate );
                 if( stop.getInt("goBack") == 0){
-                    routesGoList.add( datum );
+                    routesGoList.add( data );
                 } else if ( stop.getInt("goBack") == 1 ){
-                    routesBackList.add(datum);
+                    routesBackList.add(data);
                 }
             }
+            routesGoList.get(0).departure = true;
+            routesGoList.get(routesGoList.size()-1).destination = true;
+            routesBackList.get(0).departure = true;
+            routesBackList.get(routesBackList.size()-1).destination = true;
+
+            this.activity.setEstimateList(routesGoList, routesBackList);
+            this.activity.isDownloading = false;
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (NullPointerException e){
+            e.printStackTrace();
             this.activity.finish();
         }
-    }
-
-
-
-    private String estimateTime( int countdown, int update, int event){
-
-        long now = System.currentTimeMillis()/1000;
-        long newtime = (countdown - (now - update));
-        if( event != -1){
-            if ( event == 0){
-                return "已離站";
-            } else {
-                return "進站中";
-            }
-        }
-        if( countdown < 0 ){
-            return "未發車";
-        }
-        if (newtime < 0){
-            return "已離站";
-        }
-//        if( newtime < 60 ){
-//            return "將到站";
-//        }
-        if( newtime < 100 ){
-            return "小於" + newtime +"秒";
-        }
-        return newtime/60 + "";
     }
 }

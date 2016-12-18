@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="90sp"
+    android:gravity="center"
+    android:paddingLeft="25sp"
+    android:paddingRight="30sp"
+    android:paddingTop="0sp"
+    android:paddingBottom="0sp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+        <!-- From Destination Estimate Time -->
+        <LinearLayout
+            android:id="@+id/list_estimate_stop_from_destination_time_layout"
+            android:layout_width="100sp"
+            android:layout_height="80sp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/list_estimate_stop_from_destination_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"/>
+            <TextView
+                android:id="@+id/list_estimate_stop_from_destination_time"
+                android:layout_width="100sp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:singleLine="true"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/list_estimate_stop_from_destination_time_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text=""
+                android:gravity="center"/>
+        </LinearLayout>
+        <!-- Route Info -->
+        <LinearLayout
+            android:layout_width="80sp"
+            android:layout_height="wrap_content"
+            android:paddingTop="13sp"
+            android:paddingBottom="15sp"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/list_estimate_stop_route"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="23sp"
+                android:singleLine="true"
+                android:textAlignment="center"
+                android:textColor="@color/defaultGray" />
+            <TextView
+                android:id="@+id/list_estimate_stop_dst"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@android:color/darker_gray" />
+        </LinearLayout>
+        <!-- From Departure Estimate Time -->
+        <LinearLayout
+            android:id="@+id/list_estimate_stop_from_departure_time_layout"
+            android:layout_width="100sp"
+            android:layout_height="80sp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/list_estimate_stop_from_departure_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"/>
+            <TextView
+                android:id="@+id/list_estimate_stop_from_departure_time"
+                android:layout_width="100sp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:singleLine="true"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/list_estimate_stop_from_departure_time_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text=""
+                android:gravity="center"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+</LinearLayout>

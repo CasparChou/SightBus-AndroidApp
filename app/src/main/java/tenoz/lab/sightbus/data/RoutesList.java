@@ -5,7 +5,7 @@ package tenoz.lab.sightbus.data;
  */
 
 public class RoutesList {
-    private String routeid;
+    public String routeid;
     public String name;
     public String departure;
     public String destination;

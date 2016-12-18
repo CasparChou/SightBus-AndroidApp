@@ -1,31 +1,34 @@
 package tenoz.lab.sightbus;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import tenoz.lab.sightbus.data.EstimateList;
+import tenoz.lab.sightbus.data.EstimateListAdapter;
+import tenoz.lab.sightbus.estimate.EstimatePageAdapter;
+import tenoz.lab.sightbus.estimate.EstimateRoutesPage;
+import tenoz.lab.sightbus.estimate.PageView;
 import tenoz.lab.sightbus.http.Api;
 
 /**
@@ -34,41 +37,29 @@ import tenoz.lab.sightbus.http.Api;
 
 public class EstimateRoutesActivity extends AppCompatActivity{
 
-    ViewPager viewPager;
-    String routeId;
-    String routeName;
-    FragmentRoute fragRouteGo = new FragmentRoute();
-    FragmentRoute fragRouteBack = new FragmentRoute();
-    FragmentRoute currentFragment = fragRouteGo;
-    View clickSourceGo, clickSourceBack;
-    View touchSourceGo, touchSourceBack;
-    private String departure = "";
-    private String destination = "";
-    private ProgressBar progress;
-    private List<Map<String, String>> routesGoList;
-    private List<Map<String, String>> routesBackList;
-
-    public Boolean isDownloading = true;
-    Boolean isFirst = true;
-    SimpleAdapter estiamte_adapter_go;
-    SimpleAdapter estiamte_adapter_back;
-    SimpleAdapter stop_adapter_go;
-    SimpleAdapter stop_adapter_back;
-
-
+    private String routeId;
+    private String routeName;
+    private String departure;
+    private String destination;
+    private TabLayout mTablayout;
+    private ViewPager mViewPager;
+    private List<PageView> pageList;
+    private ArrayList<EstimateList> estimateGo;
+    private ArrayList<EstimateList> estimateBack;
+    private View pageGo, pageBack;
+    private ListView listGo, listBack;
+    private EstimateListAdapter adapterGo, adapterBack;
+    public boolean isDownloading = false;
+    private long updateTick = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estimate_route);
-        getSupportActionBar().setTitle( "正在同步..." );
-        routeId = getIntent().getExtras().getString("Route ID");
-        routeName = getIntent().getExtras().getString("Route Name");
-        viewPager = (ViewPager) findViewById(R.id.view_pager);
-        viewPager.setAdapter(new CustomAdapter(getSupportFragmentManager(), getApplicationContext()));
-        progress = (ProgressBar) (findViewById(R.id.Estimate_ProgressBar));
-        progress.setMax(80);
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x00DD00));
+
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setBackgroundDrawable(ContextCompat.getDrawable(this, R.color.colorPrimary));
+        getSupportActionBar().setElevation(0);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -76,303 +67,140 @@ public class EstimateRoutesActivity extends AppCompatActivity{
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.argb(255,251,140,0));
         }
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        setup();
+        Api.getEstimateRoute(this);
+    }
+
+    private void setup(){
+        routeId = getIntent().getExtras().getString("Route ID");
+        routeName = getIntent().getExtras().getString("Route Name");
+        departure = getIntent().getExtras().getString("Route Departure");
+        destination = getIntent().getExtras().getString("Route Destination");
+
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.layout_estimate_routes_actionbar);
+        ((TextView)(findViewById(R.id.EstimateRoutes_Actionbar_Title))).setText(routeName);
+
+        final Drawable homeIcon = ContextCompat.getDrawable(this,R.drawable.abc_ic_ab_back_material);
+        homeIcon.setColorFilter(ContextCompat.getColor(this,R.color.defaultGray), PorterDuff.Mode.SRC_ATOP);
+        ((ImageButton)(findViewById(R.id.EstimateRoutes_BackButton))).setImageDrawable(homeIcon);
+
+        mTablayout = (TabLayout) findViewById(R.id.EstimateRoutesTabs);
+        mTablayout.addTab(mTablayout.newTab().setText(destination));
+        mTablayout.addTab(mTablayout.newTab().setText(departure));
+
+        pageList = new ArrayList<>();
+        pageList.add(new EstimateRoutesPage(this));
+        pageList.add(new EstimateRoutesPage(this));
+
+        mViewPager = (ViewPager) findViewById(R.id.EstimateRoutesPager);
+        mViewPager.setAdapter( new EstimatePageAdapter(pageList));
+//        ((TextView)(((EstimateRoutesPage)pageList.get(0)).getView().findViewById(R.id.button2))).setText("AAA");
+//        ((TextView)(((EstimateRoutesPage)pageList.get(1)).getView().findViewById(R.id.button2))).setText("BB");
+
+        mTablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
 
             }
 
             @Override
-            public void onPageSelected(int position) {
-                switch (position){
-                    case 0:
-                        currentFragment = fragRouteGo;
-                        getSupportActionBar().setTitle( routeName );
-                        getSupportActionBar().setSubtitle( "往" + destination );
-                        break;
-                    case 1:
-                        currentFragment = fragRouteBack;
-                        getSupportActionBar().setTitle( routeName );
-                        getSupportActionBar().setSubtitle( "往" + departure );
-                        break;
-
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
+            public void onTabReselected(TabLayout.Tab tab) {
 
             }
         });
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTablayout));
 
-        Api.getEstimateRoute(this);
+
+        pageGo = ((EstimateRoutesPage)pageList.get(0)).getView();
+        pageBack = ((EstimateRoutesPage)pageList.get(1)).getView();
+        listGo = (ListView) pageGo.findViewById(R.id.EstimateRoutes_EstimateList);
+        listBack = (ListView) pageBack.findViewById(R.id.EstimateRoutes_EstimateList);
 
         new Timer().scheduleAtFixedRate(new TimerTask(){
-                @Override
-                public void run(){
+            @Override
+            public void run(){
+                if( EstimateRoutesActivity.this.isDestroyed() || EstimateRoutesActivity.this.isFinishing() ){
+                    cancel();
+                }
                 if( isDownloading ){
                     return;
-                }
-                int current = (progress.getProgress());
-                if( current+1 == progress.getMax() ){
+                } else {
                     isDownloading = true;
                     Api.getEstimateRoute(EstimateRoutesActivity.this);
                 }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    progress.setProgress(++current%81, true);
-                } else {
-                    progress.setProgress(++current%81);
-                }
+//                int current = (progress.getProgress());
+//                if( current+1 == progress.getMax() ){
+//                    isDownloading = true;
+//                    Api.getEstimateRoute(EstimateRoutesActivity.this);
+//                }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                    progress.setProgress(++current%161, true);
+//                } else {
+//                    progress.setProgress(++current%161);
+//                }
             }
-        },0,62);
+        },0, 10*1000);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public String getRouteId() {
         return routeId;
     }
 
-    private class CustomAdapter extends FragmentPagerAdapter{
-        private String fragments [] = {"Fa", "Fb"};
-        public CustomAdapter(FragmentManager fm, Context context) {
-            super(fm);
-        }
+    public void setEstimateList(ArrayList<EstimateList> estimateGo, ArrayList<EstimateList> estimateBack) {
+        boolean dirty = (null == this.estimateGo || this.estimateGo.size() <1)?false:true;
+        Log.i("IS DIRTY?", dirty?"TRUE":"FALSE");
+        try {
+            if(dirty){
+                this.estimateGo.clear();
+                this.estimateBack.clear();
+                this.estimateGo.addAll(estimateGo);
+                this.estimateBack.addAll(estimateBack);
+                adapterGo.notifyDataSetChanged();
+                adapterBack.notifyDataSetChanged();
+                for ( int i = 0; i < this.estimateGo.size(); i ++ ){
+                    Log.i(i+"", this.estimateGo.get(i).toString() + "  ----  " + adapterGo.getItem(i).toString() );
+                }
+            } else {
 
-        @Override
-        public Fragment getItem(int position) {
-            Bundle bundle = new Bundle();
-            bundle.putString("RouteID", routeId);
-            switch (position){
-                case 0:
-                    bundle.putBoolean("goBack",false);
-                    fragRouteGo.setArguments(bundle);
-                    return fragRouteGo;
-                case 1:
-                    bundle.putBoolean("goBack",true);
-                    fragRouteBack.setArguments(bundle);
-                    return fragRouteBack;
-                default:
-                    return null;
+                this.estimateGo = new ArrayList<>();
+                this.estimateBack = new ArrayList<>();
+                this.estimateGo.addAll(estimateGo);
+                this.estimateBack.addAll(estimateBack);
+                adapterGo = new EstimateListAdapter(this, this.estimateGo);
+                adapterBack = new EstimateListAdapter(this, this.estimateBack);
+                listGo.setAdapter(adapterGo);
+                listBack.setAdapter(adapterBack);
             }
-        }
-
-        @Override
-        public int getCount() {
-            return fragments.length;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return fragments[position];
+        }catch (NullPointerException e){
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "應用程式錯誤", Toast.LENGTH_LONG).show();
+            this.finish();
         }
     }
-
-
-
-    public SimpleAdapter estimateAdapterBuilder(boolean go ){
-        SimpleAdapter adapter = new SimpleAdapter(
-                this,
-                go?this.routesGoList:this.routesBackList,
-                android.R.layout.simple_expandable_list_item_2,
-                new String[] {"estimate", ""},
-                new int[] {android.R.id.text1, android.R.id.text2}
-        ){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent){
-                View view = super.getView(position, convertView, parent);
-                TextView title = (TextView) view.findViewById(android.R.id.text1);
-                title.setTextSize(25);
-                title.setTextColor(Color.argb(255,0,158,112));
-                title.setHeight(100);
-
-                TextView timeText = (TextView) view.findViewById(android.R.id.text2);
-                String text = title.getText().toString();
-                if( title.getText().toString().startsWith("小於") ||title.getText() == "未發車" ||  title.getText() == "將到站" || title.getText() == "已離站"  || title.getText() == "進站中"  ){
-                    timeText.setText("");
-                    title.setTextSize(18);
-                    if(title.getText() == "未發車" ){
-                        title.setTextColor(Color.argb(255,80,80,80));
-                    } else if ( title.getText() == "已離站" ){
-                        title.setTextColor(Color.argb(255,250,80,80));
-
-                    } else if ( title.getText() == "進站中" ){
-                        title.setTextColor(Color.argb(255,250,143,80));
-                    } else {
-                        title.setTextColor(Color.argb(255,80,80,250));
-                    }
-                    title.setBackgroundColor(Color.argb(0,255,255,255));
-                    timeText.setBackgroundColor(Color.argb(0,255,255,255));
-                    title.setPadding(0,25,0,0);
-                } else {
-                    title.setPadding(0,0,0,5);
-                    timeText.setText("分鐘");
-                    if( Integer.valueOf(title.getText().toString()) >= 10 && Integer.valueOf(title.getText().toString()) < 20 ) {
-                        title.setTextColor(Color.argb(255,255,255,255));
-                        title.setBackgroundColor(Color.argb(255,27,94,32));
-                        timeText.setTextColor(Color.argb(255,255,255,255));
-                        timeText.setBackgroundColor(Color.argb(255,27,94,32));
-                    } else if( Integer.valueOf(title.getText().toString()) >= 20 ){
-                        title.setTextColor(Color.argb(255,255,255,255));
-                        title.setBackgroundColor(Color.argb(255,66,66,66));
-                        timeText.setTextColor(Color.argb(255,255,255,255));
-                        timeText.setBackgroundColor(Color.argb(255,66,66,66));
-                    } else {
-                        title.setTextColor(Color.argb(255,255,255,255));
-                        title.setBackgroundColor(Color.argb(255,76,175,180));
-                        timeText.setTextColor(Color.argb(255,255,255,255));
-                        timeText.setBackgroundColor(Color.argb(255,76,175,180));
-                    }
-
-                }
-                timeText.setTextColor(Color.GRAY);
-                timeText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                title.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-
-                return view;
-            }
-        };
-        adapter.notifyDataSetChanged();
-
-        return adapter;
-    }
-    private SimpleAdapter stopsAdapterBuilder(boolean go){
-        SimpleAdapter adapter = new SimpleAdapter(
-                this,
-                go?this.routesGoList:this.routesBackList,
-                android.R.layout.simple_expandable_list_item_1,
-                new String[] {"title"},
-                new int[] {android.R.id.text1}
-        ){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent){
-                View view = super.getView(position, convertView, parent);
-                TextView title = (TextView) view.findViewById(android.R.id.text1);
-                title.setTextSize(23);
-                title.setHeight(100);
-                return view;
-            }
-        };
-        adapter.notifyDataSetChanged();
-
-        return adapter;
-    }
-    public void setData(List<Map<String, String>> routesGoList, List<Map<String, String>> routesBackList){
-        if( isFirst ) {
-            this.routesGoList = routesGoList;
-            this.routesBackList = routesBackList;
-        } else {
-            this.routesGoList.clear();
-            this.routesBackList.clear();
-            this.routesGoList.addAll(routesGoList);
-            this.routesBackList.addAll(routesBackList);
-            final ListView  estimate_go  = ((ListView) fragRouteGo.getView().findViewById(R.id.estimate_route_go));
-            final ListView  estimate_back  =((ListView) fragRouteBack.getView().findViewById(R.id.estimate_route_back));
-            ((SimpleAdapter) estimate_go.getAdapter()).notifyDataSetChanged();
-            ((SimpleAdapter) estimate_back.getAdapter()).notifyDataSetChanged();
-        }
-        setRoutesList();
-
-//        fragRouteGo.setData(this.getApplicationContext(), routesGoList);
-//        fragRouteBack.setData(this.getApplicationContext(), routesBackList);
+    public void backHome (View view){
+        this.finish();
     }
 
-    private void setRoutesList() {
-        final ListView  estimate_go  = ((ListView) fragRouteGo.getView().findViewById(R.id.estimate_route_go));
-        final ListView  estimate_back  =((ListView) fragRouteBack.getView().findViewById(R.id.estimate_route_back));
-        final ListView  stops_go  =((ListView) fragRouteGo.getView().findViewById(R.id.stop_route_go));
-        final ListView  stops_back  =((ListView) fragRouteBack.getView().findViewById(R.id.stop_route_back));
-
-        int i = 0;
-
-        if( isFirst ) {
-            estiamte_adapter_go = estimateAdapterBuilder(true);
-            estiamte_adapter_back = estimateAdapterBuilder(false);
-            stop_adapter_go = stopsAdapterBuilder(true);
-            stop_adapter_back = stopsAdapterBuilder(false);
-            estimate_go.setAdapter(estiamte_adapter_go);
-            estimate_back.setAdapter(estiamte_adapter_back);
-            stops_go.setAdapter(stop_adapter_go);
-            stops_back.setAdapter(stop_adapter_back);
-
-            stops_go.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (touchSourceGo == null) touchSourceGo = v;
-                    if (v == touchSourceGo) {
-                        estimate_go.dispatchTouchEvent(event);
-                        if (event.getAction() == MotionEvent.ACTION_UP) {
-                            clickSourceGo = v;
-                            touchSourceGo = null;
-                        }
-                    }
-                    return false;
-                }
-            });
-
-            stops_back.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (touchSourceBack == null) touchSourceBack = v;
-                    if (v == touchSourceBack) {
-                        estimate_back.dispatchTouchEvent(event);
-                        if (event.getAction() == MotionEvent.ACTION_UP) {
-                            clickSourceBack = v;
-                            touchSourceBack = null;
-                        }
-                    }
-                    return false;
-                }
-            });
-            isFirst = false;
-        } else {
-
-            ((SimpleAdapter) estimate_go.getAdapter()).notifyDataSetChanged();
-            for( i = 0; i < routesGoList.size(); i++ ){
-                Map<String, String> item = routesGoList.get(i);
-                if( ((ListView) fragRouteGo.getView().findViewById(R.id.estimate_route_go)) ==null) {
-                    Log.i("NULL", "NULL");
-                }
-                try {
-
-//                    Log.i("LIST", i + ":" + estimate_go.getCount() + "--" +
-//                            ((TextView) estimate_go.getAdapter().getView(i, null, estimate_go).findViewById(android.R.id.text1)).getText()+":"+
-//                            ((TextView) stops_go.getAdapter().getView(i, null, estimate_go).findViewById(android.R.id.text1)).getText()+
-//                            "----------------"+
-//                            item.get("estimate").toString()+"-------"+
-//                            item.get("title").toString()
-//                    );
-//                    ((TextView) estimate_go.getAdapter().getView(i, null, estimate_go).findViewById(android.R.id.text1)).setText(item.get("estimate"));
-//                    ((TextView) stops_go.getAdapter().getView(i, null, estimate_go).findViewById(android.R.id.text1)).setText(item.get("title"));
-//                    estimate_go.getAdapter().getView(i, null, estimate_go).invalidate();
-//                    stops_go.getAdapter().getView(i, null, estimate_go).invalidate();
-                }catch (NullPointerException e){
-                    Log.i("NULL", "NULLAT   "+ i);
-                }
-            }
-
-           /* i = 0;
-            while( routesBackList.iterator().hasNext() ){
-                Map<String, String> item = routesBackList.iterator().next();
-                ((TextView)estimate_back.getChildAt(i).findViewById(android.R.id.text1)).setText(item.get("estimate"));
-                ((TextView)stops_back.getChildAt(i).findViewById(android.R.id.text1)).setText(item.get("title"));
-                i++;
-            }*/
-            estiamte_adapter_go.notifyDataSetChanged();
-            stop_adapter_go.notifyDataSetChanged();
-            stop_adapter_back.notifyDataSetChanged();
-            estiamte_adapter_back.notifyDataSetChanged();
-        }
-    }
-
-
-    public void setDestination(String destination){
-        this.destination = destination;
-        if( isFirst ){
-            getSupportActionBar().setTitle( routeName );
-            getSupportActionBar().setSubtitle( "往" + destination );
-        }
-    }
-    public void setDeparture(String departure){
-        this.departure = departure;
-    }
 
 }
+
+
+
+

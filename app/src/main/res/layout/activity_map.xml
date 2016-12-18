@@ -13,7 +13,44 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="120sp"
+            android:elevation="5sp"
+            android:background="@color/colorPrimary"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/Map_Filter_Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="0sp"
+                android:paddingBottom="5sp"
+                android:textSize="30sp"
+                android:textAlignment="center"
+                android:text="@string/map_filter_text"
+                android:textColor="?android:attr/textColorTertiary" />
+            <EditText
+                android:id="@+id/Map_SearchBar"
+                android:layout_width="match_parent"
+                android:layout_height="50sp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="30sp"
+                android:layout_marginRight="30sp"
+                android:layout_marginTop="10sp"
+                android:elevation="3dp"
+                android:theme="@style/DefaultEditText"
+                android:background="@drawable/edittext"
+                android:selectAllOnFocus="true"
+                android:textAlignment="center"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                />
+
+        </LinearLayout>
+
         <FrameLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"

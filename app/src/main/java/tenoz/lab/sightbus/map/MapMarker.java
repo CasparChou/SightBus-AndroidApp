@@ -11,8 +11,8 @@ import com.google.android.gms.maps.model.Marker;
 import java.util.HashMap;
 import java.util.Map;
 
+import tenoz.lab.sightbus.EstimateStopsActivity;
 import tenoz.lab.sightbus.MapActivity;
-import tenoz.lab.sightbus.StopsActivity;
 
 /**
  * Created by AppleCaspar on 2016/10/21.
@@ -52,8 +52,8 @@ public class MapMarker implements GoogleMap.OnMarkerClickListener, GoogleMap.OnI
     public void onInfoWindowClick(Marker marker) {
         try {
             StopMarker stop = this.activity.getNearbyStops().get(marker.getId());
-            Intent stopActivity = new Intent(this.activity, StopsActivity.class);
-            stopActivity.putExtra("Title@Actionbar", stop.name);
+            Intent stopActivity = new Intent(this.activity, EstimateStopsActivity.class);
+            stopActivity.putExtra("Stop Name", stop.name);
             stopActivity.putExtra("StopID", stop.stopid);
 
             Log.i("Marker", marker.getId() + ", Clicked: " + markers.get(marker.getId()));

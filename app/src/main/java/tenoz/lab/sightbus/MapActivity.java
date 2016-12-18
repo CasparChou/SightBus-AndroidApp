@@ -2,13 +2,21 @@ package tenoz.lab.sightbus;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -45,7 +53,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private MapMarker mapMarkerListeners = new MapMarker();
     public LatLng[] bounds = new LatLng[2];
     private Map<String, StopMarker> nearbyStops = new HashMap<String, StopMarker>();
-
+    private String pastQuery = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +71,40 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         overridePendingTransition(R.anim.translate_in, R.anim.translate_out);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setBackgroundDrawable(ContextCompat.getDrawable(this, R.color.colorPrimary));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(0);
+        final Drawable homeIcon = ContextCompat.getDrawable(this,R.drawable.abc_ic_ab_back_material);
+        homeIcon.setColorFilter(ContextCompat.getColor(this,R.color.defaultGray), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(homeIcon);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.argb(255,251,140,0));
+        }
+        final EditText editText = ((EditText) findViewById(R.id.Map_SearchBar));
+        editText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(!editText.getText().toString().equals(pastQuery)){
+                    pastQuery = editText.getText().toString();
 
+                    for(Map.Entry<String, StopMarker> m : nearbyStops.entrySet()){
+                        if( !m.getValue().isMatch(pastQuery) ){
+                            m.getValue().marker.setVisible(false);
+                        } else {
+                            m.getValue().marker.setVisible(true);
+                        }
+                    }
+                }
+                if (event.getAction()==KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -77,37 +118,39 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         map.setOnCameraMoveStartedListener(mapListeners);
         map.setOnCameraIdleListener(mapListeners);
         map.setMyLocationEnabled(true);
+        map.getUiSettings().setMapToolbarEnabled(false);
+        map.getUiSettings().setZoomControlsEnabled(false);
 
 
-        map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-
-            @Override
-            public View getInfoWindow(Marker marker)   {
-                return null;
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {
-                View v = getLayoutInflater().inflate(R.layout.layout_marker_infowindow, null);
-                TextView titleHidden = (TextView)  v.findViewById(R.id.marker_info_title_hidden);
-                if( marker.getTitle().length()*2 > marker.getSnippet().length()){
-                    titleHidden.setText(marker.getTitle());
-                } else {
-                    titleHidden.setText(marker.getSnippet());
-                }
-                titleHidden.setTextColor(Color.TRANSPARENT);
-                TextView title = (TextView)  v.findViewById(R.id.marker_info_title);
-                title.setText(marker.getTitle());
-                title.setTextColor(Color.BLACK);
-
-                TextView snippet = (TextView)  v.findViewById(R.id.marker_info_snippet);
-                snippet.setText(marker.getSnippet());
-                snippet.setTextColor(Color.GRAY);
-
-                return v;
-            }
-
-        });
+//        map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+//
+//            @Override
+//            public View getInfoWindow(Marker marker)   {
+//                return null;
+//            }
+//
+//            @Override
+//            public View getInfoContents(Marker marker) {
+//                View v = getLayoutInflater().inflate(R.layout.layout_marker_infowindow, null);
+//                TextView titleHidden = (TextView)  v.findViewById(R.id.marker_info_title_hidden);
+//                if( marker.getTitle().length()*2 > marker.getSnippet().length()){
+//                    titleHidden.setText(marker.getTitle());
+//                } else {
+//                    titleHidden.setText(marker.getSnippet());
+//                }
+//                titleHidden.setTextColor(Color.TRANSPARENT);
+//                TextView title = (TextView)  v.findViewById(R.id.marker_info_title);
+//                title.setText(marker.getTitle());
+//                title.setTextColor(Color.BLACK);
+//
+//                TextView snippet = (TextView)  v.findViewById(R.id.marker_info_snippet);
+//                snippet.setText(marker.getSnippet());
+//                snippet.setTextColor(Color.GRAY);
+//
+//                return v;
+//            }
+//
+//        });
 
         if( mapUtils.checkPermission() ){
             mapUtils.updateLocation();
@@ -143,7 +186,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public void reloadStops(){
         VisibleRegion curScreen = map.getProjection().getVisibleRegion();
-
         bounds[0] = new LatLng( curScreen.farLeft.latitude,     curScreen.farLeft.longitude );
         bounds[1] = new LatLng( curScreen.nearLeft.latitude,    curScreen.nearRight.longitude   );
         Api.getNearbyStops(this);
@@ -193,13 +235,39 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         )
                 );
                 Marker mark = addMarker(stopMark.latlng, stopMark.name, stopMark.stopid, stopMark.routes);
+                stopMark.setMarker(mark);
                 nearbyStops.put(mark.getId(), stopMark );
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
+    private void showAllMarker(){
+        for(Map.Entry<String, StopMarker> m : nearbyStops.entrySet()){
+            m.getValue().marker.setVisible(true);
+        }
+    }
+
+    private void hideAllMarker(){
+        for(Map.Entry<String, StopMarker> m : nearbyStops.entrySet()){
+            m.getValue().marker.setVisible(false);
+        }
+    }
+
     public Map<String, StopMarker> getNearbyStops(){
         return  nearbyStops;
     }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
 }

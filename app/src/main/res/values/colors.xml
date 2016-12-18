@@ -4,5 +4,7 @@
     <color name="colorPrimaryDark">#ef6c00</color>
     <color name="colorAccent">#ffab40</color>
     <color name="androidWhite">#fafafa</color>
+    <color name="totallyGray">#603702</color>
     <color name="defaultGray">#724000</color>
+    <color name="maybeGray">#c16c00</color>
 </resources>
