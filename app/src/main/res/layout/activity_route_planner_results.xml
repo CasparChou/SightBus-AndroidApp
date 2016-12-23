@@ -99,7 +99,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/defaultGray"
             android:gravity="center"
-            android:text="@string/SearchStops_NotFound"/>
+            android:text="@string/route_planning_loading_0"/>
 
     </LinearLayout>
 </RelativeLayout>

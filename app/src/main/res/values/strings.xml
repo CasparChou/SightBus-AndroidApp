@@ -15,4 +15,6 @@
     <string name="route_planning">行程規劃</string>
     <string name="route_planning_dep">首先\n請選擇起始點</string>
     <string name="route_planning_dst">接著\n請選擇目的地</string>
+    <string name="route_planning_NoResults">嗚嗚\n我們無法幫你規劃路線</string>
+    <string name="route_planning_loading_0">正在為您開闢隧道！</string>
 </resources>

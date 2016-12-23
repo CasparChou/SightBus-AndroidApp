@@ -24,6 +24,7 @@ public class RoutePlanner extends AppCompatActivity {
     private ViewPager mViewPager;
     private String departure;
     private String destination;
+    private RoutePlannerPageAdapter viewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +53,10 @@ public class RoutePlanner extends AppCompatActivity {
         pageList.add( new RoutePlannerPlanningPage(this, 0, this) );
         pageList.add( new RoutePlannerPlanningPage(this, 1, this) );
         pageList.add( new RoutePlannerPlanningResults(this, this) );
+        viewPagerAdapter =  new RoutePlannerPageAdapter(pageList);
         mViewPager = (ViewPager) findViewById(R.id.RoutePlannerPager);
-        mViewPager.setAdapter( new RoutePlannerPageAdapter(pageList));
+        mViewPager.setAdapter(viewPagerAdapter);
+        mViewPager.addOnPageChangeListener(viewPagerAdapter);
     }
     public ViewPager getViewPager() {
         if (null == mViewPager) {
@@ -62,10 +65,16 @@ public class RoutePlanner extends AppCompatActivity {
         return mViewPager;
     }
 
+
+    public String getDeparture() {
+        return this.departure;
+    }
+    public String getDestination() {
+        return this.destination;
+    }
     public void setDeparture(String departure) {
         this.departure = departure;
     }
-
     public void setDestination(String destination) {
         this.destination = destination;
     }

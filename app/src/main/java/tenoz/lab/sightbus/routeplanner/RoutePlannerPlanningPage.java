@@ -143,9 +143,9 @@ public class RoutePlannerPlanningPage extends PageView {
         SharedPreferences pref = context.getSharedPreferences("routeplanner.search.sightbus", MODE_PRIVATE);
         String current = "";
         if( step == 0 ) {
-            pref.getString("departure","");
+            current = pref.getString("departure","");
         } else {
-            pref.getString("destination","");
+            current = pref.getString("destination","");
         }
         if( current.contains(";") ){
             ArrayList <StopsList> stopsRecord = new ArrayList<>();
