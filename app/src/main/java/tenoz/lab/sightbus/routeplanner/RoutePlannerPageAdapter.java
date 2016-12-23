@@ -11,7 +11,7 @@ import java.util.List;
  * Created by AppleCaspar on 2016/12/4.
  */
 
-public class RoutePlannerPageAdapter extends PagerAdapter {
+public class RoutePlannerPageAdapter extends PagerAdapter implements ViewPager.OnPageChangeListener{
     final private List<PageView>pageList;
     public RoutePlannerPageAdapter( List<PageView> pages){
         this.pageList = pages;
@@ -34,5 +34,22 @@ public class RoutePlannerPageAdapter extends PagerAdapter {
     @Override
     public void destroyItem(View container, int position, Object object) {
         ((ViewPager) container).removeView((View) object);
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if( position == 2 ){
+            ((RoutePlannerPlanningResults)pageList.get(2)).planning();
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }
