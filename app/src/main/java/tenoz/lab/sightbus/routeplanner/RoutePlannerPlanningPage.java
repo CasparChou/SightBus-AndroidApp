@@ -121,17 +121,15 @@ public class RoutePlannerPlanningPage extends PageView {
                     }
                 }
                 Log.i("Next", cache);
-                if( step == 0 ) {
+                if( step == 0 ){
                     pref.edit().remove("departure").commit();
                     pref.edit().putString("departure",cache).commit();
-                } else {
-                    pref.edit().remove("destination").commit();
-                    pref.edit().putString("destination",cache).commit();
-                }
-                if( step == 0 ){
                     activity.setDeparture(name);
                     activity.getViewPager().setCurrentItem(1);
                 } else {
+                    pref.edit().remove("destination").commit();
+                    pref.edit().putString("destination",cache).commit();
+                    activity.hideKeyboard();
                     activity.setDestination(name);
                     activity.getViewPager().setCurrentItem(2);
                 }
@@ -173,7 +171,6 @@ public class RoutePlannerPlanningPage extends PageView {
         }
         cwnd--;
     }
-
     public void setStopsList(ArrayList<StopsList> stopsLists) {
         this.stopsLists = stopsLists;
         (findViewById(R.id.RoutePlanning_Not_Found)).setVisibility(View.INVISIBLE);
@@ -195,9 +192,10 @@ public class RoutePlannerPlanningPage extends PageView {
         private ArrayList<StopsList> stopsLists = new ArrayList<StopsList>();
 
         @Override
-        protected String doInBackground(Void... unuse) {
+        protected String doInBackground(Void... unused) {
             try {
-                URL url = new URL("http://sightbus.tenoz.asia/stops/search/?query=" + URLEncoder.encode(currentQuering, "utf-8"));
+                URL url = new URL(
+                        "http://sightbus.tenoz.asia/stops/search/?query=" + URLEncoder.encode(currentQuering, "utf-8"));
                 URLConnection conn = url.openConnection();
                 InputStream in = conn.getInputStream();
                 int data = in.read();

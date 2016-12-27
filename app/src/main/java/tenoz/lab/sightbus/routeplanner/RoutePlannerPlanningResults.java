@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -26,7 +26,8 @@ import java.util.TimerTask;
 
 import tenoz.lab.sightbus.R;
 import tenoz.lab.sightbus.RoutePlanner;
-import tenoz.lab.sightbus.data.StopsList;
+import tenoz.lab.sightbus.data.PlanList;
+import tenoz.lab.sightbus.data.PlanListAdapter;
 
 public class RoutePlannerPlanningResults extends PageView {
 
@@ -38,6 +39,8 @@ public class RoutePlannerPlanningResults extends PageView {
     private String destination;
     private String departure;
     private String endpoint = "http://sightbus.tenoz.asia/routes/plan/?dep=%s&dst=%s";
+    private ArrayList<PlanList> planList;
+    private String currentQuering = "";
 
     public RoutePlannerPlanningResults(final Context context, final Activity activity) {
         super(context);
@@ -50,21 +53,24 @@ public class RoutePlannerPlanningResults extends PageView {
         new Timer().scheduleAtFixedRate(new TimerTask(){
             @Override
             public void run(){
-                if( ((RoutePlanner) activity).getViewPager().getCurrentItem() == 2 ){
-                    activity.runOnUiThread(new Runnable() {
-                        public void run() {
-                            image_tick = (image_tick+1)%3;
-                            ((ImageView)view.findViewById(R.id.RoutePlannerResult_img))
-                                    .setImageDrawable(
-                                            ContextCompat.getDrawable(
-                                                    context,
-                                                    context.getResources().getIdentifier("tunnel256_"+image_tick, "drawable", context.getPackageName())
-                                            )
-                                    );
+            if( ((RoutePlanner) activity).getViewPager().getCurrentItem() == 2 ){
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        image_tick = (image_tick+1)%3;
+                        ((ImageView)view.findViewById(R.id.RoutePlannerResult_img))
+                            .setImageDrawable(
+                                ContextCompat.getDrawable(
+                                        context,
+                                        context.getResources().getIdentifier("tunnel256_"+image_tick, "drawable", context.getPackageName())
+                                )
+                            );
+                        if( image_tick%5 == 0 ){
+                            planning();
                         }
-                    });
+                    }
+                });
 
-                }
+            }
             }
         },0,500);
     }
@@ -72,12 +78,20 @@ public class RoutePlannerPlanningResults extends PageView {
     public void planning() {
         departure = activity.getDeparture();
         destination = activity.getDestination();
+        if ( !currentQuering.equals(departure+","+destination)) {
+            currentQuering = (departure+","+destination);
+            (view.findViewById(R.id.RoutePlanningResults_ResultsList)).setVisibility(INVISIBLE);
+            (view.findViewById(R.id.RoutePlanningResults_Not_Found)).setVisibility(VISIBLE);
+        } else {
+            return;
+        }
         new android.os.Handler().postDelayed(
             new Runnable() {
                 public void run() {
-                    if( cwnd < 5 && departure.length()>0 && destination.length()>0 ){
+                    if( cwnd < 5 && (departure!= null && departure.length()>0) && (destination!= null && destination.length()>0 )){
+                        Log.i("Run Plan", departure+"  ,  "+destination);
                         cwnd++;
-                        ((TextView)(findViewById(R.id.RoutePlanning_Hint))).setText("尋找中...");
+//                        ((TextView)(findViewById(R.id.RoutePlanning_Hint))).setText("尋找中...");
                         new APIRoutePlanner().execute();
 
                     }
@@ -90,16 +104,34 @@ public class RoutePlannerPlanningResults extends PageView {
         return view;
     }
 
+
+    public void setResultList(ArrayList<PlanList> planList) {
+        (view.findViewById(R.id.RoutePlanningResults_Not_Found)).setVisibility(INVISIBLE);
+        (view.findViewById(R.id.RoutePlanningResults_ResultsList)).setVisibility(VISIBLE);
+        this.planList = planList;
+//        (findViewById(R.id.SearchRoutes_Not_Found)).setVisibility(View.INVISIBLE);
+//        try {
+            PlanListAdapter adapter = new PlanListAdapter(this.getContext(), this.planList);
+            ListView listView = (ListView) findViewById(R.id.RoutePlanningResults_ResultsList);
+            listView.setAdapter(adapter);
+//            if(routesList.size() == 0){
+//                (findViewById(R.id.SearchRoutes_Not_Found)).setVisibility(View.VISIBLE);
+//            }
+//        }catch (NullPointerException e){
+//            Toast.makeText(activity.getApplicationContext(), "應用程式錯誤", Toast.LENGTH_LONG);
+//        }
+    }
     public class APIRoutePlanner extends AsyncTask<Void,Integer,String> {
 
         String fetch = "";
         RoutePlannerPlanningPage activity = null;
-        private ArrayList<StopsList> stopsLists = new ArrayList<StopsList>();
+        private ArrayList<PlanList> planLists = new ArrayList<PlanList>();
 
         @Override
         protected String doInBackground(Void... unused) {
             try {
                 URL url = new URL(String.format(endpoint, URLEncoder.encode(departure, "utf-8"), URLEncoder.encode(destination, "utf-8")));
+                Log.i("Network", "connect");
                 URLConnection conn = url.openConnection();
                 InputStream in = conn.getInputStream();
                 int data = in.read();
@@ -126,21 +158,24 @@ public class RoutePlannerPlanningResults extends PageView {
             super.onPostExecute(msg);
             Log.i("PostExec", fetch);
             parser();
-//            setResultList(stopsLists);
+            setResultList(planLists);
             cwnd--;
         }
 
 
         private void parser(){
-            ArrayList<StopsList> list = new ArrayList<StopsList>();
+            ArrayList<PlanList> list = new ArrayList<PlanList>();
             try {
                 JSONObject jsonRootObject = new JSONObject(fetch);
-                JSONArray routes = jsonRootObject.optJSONArray("results");
+                JSONArray routes = jsonRootObject.optJSONArray("routes");
                 for( int i = 0; i < routes.length(); i++){
                     JSONObject route = routes.getJSONObject(i);
-                    list.add(new StopsList(route.getString("stop"),route.getString("routes")));
+                    PlanList stop2 = new PlanList(/*route.getString("stop"), route.getString("routes")*/route, name, depId, dstId, destination, goBack, countdown, update, far, time, avgTime);
+                    list.add(stop2);
+                    Log.i("lll", stop2.toString());
                 }
-                this.stopsLists = list;
+                this.planLists = list;
+//                set
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (NullPointerException e){

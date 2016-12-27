@@ -21,19 +21,9 @@
             android:layout_marginTop="-9dp"
             android:elevation="5dp"
             android:layout_width="match_parent"
-            android:layout_height="250sp"
+            android:layout_height="150sp"
             android:background="@color/colorPrimary"
             android:orientation="vertical">
-            <TextView
-                android:id="@+id/RoutePlanning_Title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="10sp"
-                android:paddingBottom="20sp"
-                android:textSize="30sp"
-                android:textAlignment="center"
-                android:text="@string/route_planning"
-                android:textColor="?android:attr/textColorTertiary" />
 
             <TextView
                 android:id="@+id/RoutePlanning_Hint"

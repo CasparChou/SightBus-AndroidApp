@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_search_stop"
@@ -9,97 +9,82 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
-    tools:context="tenoz.lab.sightbus.SearchStops">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:elevation="5dp"
+        android:background="@color/colorPrimary"
         android:orientation="vertical">
-
-        <ProgressBar
-            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-            android:id="@+id/SearchStops_ProgressBar"
+        <TextView
+            android:id="@+id/RoutePlanningResults_Title"
             android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:indeterminate="true"
+            android:layout_height="wrap_content"
+            android:paddingTop="20sp"
+            android:paddingBottom="35sp"
+            android:textSize="30sp"
+            android:textAlignment="center"
+            android:text="@string/searching_stops"
+            android:textColor="?android:attr/textColorTertiary" />
+        <EditText
+            android:id="@+id/RoutePlanningResults_SearchBar"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="30sp"
+            android:layout_marginRight="30sp"
+            android:layout_marginTop="10sp"
+            android:elevation="3dp"
+            android:theme="@style/DefaultEditText"
+            android:background="@drawable/edittext"
+            android:selectAllOnFocus="true"
+            android:textAlignment="center"
+            android:imeOptions="actionSearch"
+            android:singleLine="true"
             android:visibility="invisible"
-            android:layout_alignParentTop="true" />
+            />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="5">
 
         <LinearLayout
-            android:layout_marginTop="-9dp"
-            android:elevation="5dp"
+            android:id="@+id/RoutePlanningResults_Not_Found"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="180sp"
-            android:background="@color/colorPrimary"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            >
+            <ImageView
+                android:id="@+id/RoutePlannerResult_img"
+                android:layout_width="100sp"
+                android:layout_height="100sp"
+                android:layout_marginTop="80sp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:src="@drawable/tunnel64"/>
             <TextView
-                android:id="@+id/SearchStops_Title"
+                android:layout_marginTop="5sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="20sp"
-                android:paddingBottom="35sp"
-                android:textSize="30sp"
-                android:textAlignment="center"
-                android:text="@string/searching_stops"
-                android:textColor="?android:attr/textColorTertiary" />
-            <EditText
-                android:id="@+id/SearchStops_SearchBar"
-                android:layout_width="match_parent"
-                android:layout_height="50sp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="30sp"
-                android:layout_marginRight="30sp"
-                android:layout_marginTop="10sp"
-                android:elevation="3dp"
-                android:theme="@style/DefaultEditText"
-                android:background="@drawable/edittext"
-                android:selectAllOnFocus="true"
-                android:textAlignment="center"
-                android:imeOptions="actionSearch"
-                android:singleLine="true"
-                />
-
+                android:textColor="@color/defaultGray"
+                android:gravity="center"
+                android:text="@string/route_planning_loading_0"/>
         </LinearLayout>
         <ListView
-            android:id="@+id/SearchStops_ResultsList"
+            android:id="@+id/RoutePlanningResults_ResultsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:dividerHeight="0dp"
-            android:divider="@android:color/transparent"
-            android:layout_below="@+id/SearchStops_SearchBar" />
+            android:divider="@android:color/transparent" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/SearchStops_Not_Found"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginTop="200sp"
-        >
-        <ImageView
-            android:id="@+id/RoutePlannerResult_img"
-            android:layout_width="100sp"
-            android:layout_height="100sp"
-            android:layout_marginTop="80sp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:src="@drawable/tunnel64"/>
-        <TextView
-            android:layout_marginTop="5sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/defaultGray"
-            android:gravity="center"
-            android:text="@string/route_planning_loading_0"/>
-
-    </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

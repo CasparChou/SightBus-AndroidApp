@@ -1,10 +1,8 @@
 package tenoz.lab.sightbus;
 
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,21 +31,17 @@ public class StopsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.scale_in, R.anim.scale_out);
         setContentView(R.layout.activity_stops);
-        Log.i("StopName", getIntent().getExtras().getString("Title@Actionbar"));
-        Log.i("StopID", getIntent().getExtras().getString("StopID")+"");
-        getSupportActionBar().setTitle(getIntent().getExtras().getString("Title@Actionbar"));
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x00DD00));
+        Helpers.initialActionbar(this,getIntent().getExtras().getString("Title@Actionbar"));
+
         listView = (ListView) findViewById( R.id.route_list );
         listInfoView = (ListView) findViewById( R.id.route_info_list );
-        overridePendingTransition(R.anim.scale_in, R.anim.scale_out);
-
         listView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(touchSource == null)
                     touchSource = v;
-
                 if(v == touchSource) {
                     listInfoView.dispatchTouchEvent(event);
                     if(event.getAction() == MotionEvent.ACTION_UP) {

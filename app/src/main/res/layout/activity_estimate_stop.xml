@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="0sp"
     tools:context=".EstimateStopsActivity">
 
     <LinearLayout
@@ -22,8 +23,6 @@
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:paddingTop="5sp"
-        android:paddingBottom="5sp"
         android:dividerHeight="0dp"
         android:divider="@android:color/transparent"/>
 

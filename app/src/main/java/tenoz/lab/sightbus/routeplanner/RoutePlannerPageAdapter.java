@@ -7,14 +7,19 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import tenoz.lab.sightbus.RoutePlanner;
+
 /**
  * Created by AppleCaspar on 2016/12/4.
  */
 
-public class RoutePlannerPageAdapter extends PagerAdapter implements ViewPager.OnPageChangeListener{
+public class RoutePlannerPageAdapter extends PagerAdapter implements ViewPager.OnPageChangeListener {
     final private List<PageView>pageList;
-    public RoutePlannerPageAdapter( List<PageView> pages){
+    private final RoutePlanner activity;
+
+    public RoutePlannerPageAdapter(List<PageView> pages, RoutePlanner routePlanner){
         this.pageList = pages;
+        this.activity = routePlanner;
     }
     @Override
     public int getCount() {
@@ -43,13 +48,12 @@ public class RoutePlannerPageAdapter extends PagerAdapter implements ViewPager.O
 
     @Override
     public void onPageSelected(int position) {
-        if( position == 2 ){
-            ((RoutePlannerPlanningResults)pageList.get(2)).planning();
-        }
+
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
 
     }
+
 }

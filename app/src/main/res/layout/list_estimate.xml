@@ -7,7 +7,8 @@
     android:paddingRight="30sp"
     android:paddingTop="0sp"
     android:paddingBottom="0sp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@color/defaultWhite">
     <LinearLayout
         android:id="@+id/list_estimate_plate_layout"
         android:layout_width="60sp"
@@ -22,7 +23,7 @@
             android:layout_width="30sp"
             android:layout_height="30sp"
             android:gravity="center"
-            android:src="@drawable/bus64"/>
+            android:src="@mipmap/bus"/>
         <TextView
             android:id="@+id/list_estimate_plate"
             android:layout_width="match_parent"
@@ -60,6 +61,8 @@
         android:layout_height="90sp"
         android:paddingBottom="0sp"
         android:paddingTop="0sp"
+        android:layout_marginLeft="10sp"
+        android:layout_marginRight="10sp"
         android:gravity="center"
         android:orientation="vertical">
         <ImageView
@@ -77,7 +80,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="15sp"
-        android:paddingLeft="10sp"
         android:paddingBottom="15sp"
         android:gravity="center"
         android:orientation="vertical">

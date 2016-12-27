@@ -59,9 +59,9 @@ public class EstimateListAdapter extends ArrayAdapter<EstimateList> {
             convertView.findViewById(R.id.list_estimate_time_layout).setVisibility(View.INVISIBLE);
             if(estimate.event != -1){
                 if( estimate.event == 0 ){
-                    ((ImageView)(convertView.findViewById(R.id.list_estimate_bus))).setImageResource(R.drawable.bus_gray64);
+//                    ((ImageView)(convertView.findViewById(R.id.list_estimate_bus))).setImageResource(R.drawable.bus_gray64);
                 } else {
-                    ((ImageView)(convertView.findViewById(R.id.list_estimate_bus))).setImageResource(R.drawable.bus64);
+//                    ((ImageView)(convertView.findViewById(R.id.list_estimate_bus))).setImageResource(R.drawable.bus64);
                 }
             }
         } else {

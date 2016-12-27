@@ -10,10 +10,10 @@
         android:padding="5dp"
         android:orientation="vertical">
         <ImageView
-            android:padding="5dp"
+            android:padding="0dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/bus64"/>
+            android:src="@mipmap/bus"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

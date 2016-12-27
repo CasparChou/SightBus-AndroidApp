@@ -1,15 +1,13 @@
 package tenoz.lab.sightbus;
 
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import java.util.ArrayList;
 
@@ -31,19 +29,7 @@ public class RoutePlanner extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_planner);
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setBackgroundDrawable(ContextCompat.getDrawable(this, R.color.colorPrimary));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setElevation(0);
-        final Drawable homeIcon = ContextCompat.getDrawable(this,R.drawable.abc_ic_ab_back_material);
-        homeIcon.setColorFilter(ContextCompat.getColor(this,R.color.defaultGray), PorterDuff.Mode.SRC_ATOP);
-        getSupportActionBar().setHomeAsUpIndicator(homeIcon);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.argb(255,251,140,0));
-        }
+        Helpers.initialHomeBtnActionbar(this);
         setup();
 
     }
@@ -53,10 +39,19 @@ public class RoutePlanner extends AppCompatActivity {
         pageList.add( new RoutePlannerPlanningPage(this, 0, this) );
         pageList.add( new RoutePlannerPlanningPage(this, 1, this) );
         pageList.add( new RoutePlannerPlanningResults(this, this) );
-        viewPagerAdapter =  new RoutePlannerPageAdapter(pageList);
+        viewPagerAdapter =  new RoutePlannerPageAdapter(pageList, this);
         mViewPager = (ViewPager) findViewById(R.id.RoutePlannerPager);
         mViewPager.setAdapter(viewPagerAdapter);
         mViewPager.addOnPageChangeListener(viewPagerAdapter);
+        mViewPager.setOnTouchListener(new View.OnTouchListener()
+        {
+            @Override
+            public boolean onTouch(View v, MotionEvent event)
+            {
+                return false;
+            }
+        });
+
     }
     public ViewPager getViewPager() {
         if (null == mViewPager) {
@@ -78,5 +73,33 @@ public class RoutePlanner extends AppCompatActivity {
     public void setDestination(String destination) {
         this.destination = destination;
     }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if( getViewPager().getCurrentItem() > 0){
+                    getViewPager().setCurrentItem(getViewPager().getCurrentItem()-1);
+                } else {
+                    this.finish();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    public void hideKeyboard(){
+        try {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        } catch (NullPointerException e){
 
+        }
+    }
+    @Override
+    public void onBackPressed() {
+        if( getViewPager().getCurrentItem() > 0){
+            getViewPager().setCurrentItem(getViewPager().getCurrentItem()-1);
+        } else {
+            this.finish();
+        }
+    }
 }

@@ -1,9 +1,7 @@
 package tenoz.lab.sightbus;
 
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
@@ -12,8 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -57,16 +53,7 @@ public class EstimateRoutesActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estimate_route);
 
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setBackgroundDrawable(ContextCompat.getDrawable(this, R.color.colorPrimary));
-        getSupportActionBar().setElevation(0);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.argb(255,251,140,0));
-        }
+        Helpers.initialActionbar(this);
         setup();
         Api.getEstimateRoute(this);
     }
@@ -77,6 +64,8 @@ public class EstimateRoutesActivity extends AppCompatActivity{
         departure = getIntent().getExtras().getString("Route Departure");
         destination = getIntent().getExtras().getString("Route Destination");
 
+        getSupportActionBar().setElevation(0);
+        getSupportActionBar().setBackgroundDrawable(ContextCompat.getDrawable(this, R.color.colorPrimary));
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(R.layout.layout_estimate_routes_actionbar);
         ((TextView)(findViewById(R.id.EstimateRoutes_Actionbar_Title))).setText(routeName);

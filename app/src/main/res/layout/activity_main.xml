@@ -44,124 +44,114 @@
             android:textAlignment="center"
             android:textSize="20sp"
             android:textColor="#8a000000"
-            android:background="?attr/colorPrimary"
+            android:background="@color/colorPrimary"
             android:id="@+id/main_nearest_btn"
             style="@style/Widget.AppCompat.Button.Borderless" />
     </LinearLayout>
-    <LinearLayout
-        android:orientation="vertical"
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="10sp"
+        android:paddingRight="10sp"
         android:layout_weight="5"
-        android:background="@drawable/cornor_theme_white">
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:gravity="center_vertical">
+        android:background="@color/defaultWhite">
+        <TableRow>
             <ImageButton
-                android:src="@drawable/pathfinding128"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="15sp"
-                android:paddingTop="30sp"
-                android:paddingBottom="20sp"
-                android:background="@android:color/white"
-                android:scaleType="fitCenter"
                 android:id="@+id/main_pathfinding_btn"
-                android:onClick="openRoutePlanning"/>
-            <ImageButton
-                android:src="@drawable/stops128"
+                android:src="@drawable/routeplaner128"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="15sp"
+                android:paddingLeft="30sp"
+                android:paddingRight="30sp"
                 android:paddingTop="30sp"
-                android:paddingBottom="20sp"
+                android:paddingBottom="10sp"
+                android:background="@android:color/transparent"
+                android:onClick="openRoutePlanning"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"/>
+            <ImageButton
+                android:id="@+id/main_nearby_btn"
+                android:src="@drawable/stops512"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="30sp"
+                android:paddingRight="30sp"
+                android:paddingTop="30sp"
+                android:paddingBottom="10sp"
                 android:onClick="openMap"
-                android:background="@android:color/white"
-                android:scaleType="fitCenter"
-                android:id="@+id/main_nearby_btn" />
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10sp">
+                android:background="@android:color/transparent"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true" />
+        </TableRow>
+        <TableRow>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textAlignment="center"
                 android:textSize="16sp"
-                android:text="@string/route_planning"/>
+                android:text="@string/route_planning"
+                android:background="@color/defaultWhite"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textAlignment="center"
                 android:textSize="16sp"
-                android:text="@string/nearby_stops" />
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:gravity="center_vertical">
-
+                android:text="@string/nearby_stops"
+                android:background="@color/defaultWhite"/>
+        </TableRow>
+        <TableRow>
             <ImageButton
-                android:src="@drawable/search_routes128"
-                android:layout_width="wrap_content"
+                android:id="@+id/main_search_route_btn"
+                android:src="@drawable/search_routes512"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginRight="15sp"
+                android:paddingLeft="30sp"
+                android:paddingRight="30sp"
                 android:paddingTop="30sp"
-                android:paddingBottom="20sp"
-                android:background="@android:color/white"
+                android:paddingBottom="10sp"
+                android:background="@android:color/transparent"
                 android:onClick="openSearchRoutes"
-                android:scaleType="fitCenter"
-                android:id="@+id/main_search_route_btn" />
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true" />
 
             <ImageButton
-                android:src="@drawable/search_stops128"
-                android:layout_width="wrap_content"
+                android:id="@+id/main_search_stop_btn"
+                android:src="@drawable/search_stops512"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="15sp"
+                android:paddingLeft="30sp"
+                android:paddingRight="30sp"
                 android:paddingTop="30sp"
-                android:paddingBottom="20sp"
-                android:background="@android:color/white"
+                android:paddingBottom="10sp"
+                android:background="@android:color/transparent"
                 android:onClick="openSearchStops"
-                android:scaleType="fitCenter"
-                android:id="@+id/main_search_stop_btn" />
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp">
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true" />
+        </TableRow>
+        <TableRow>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textAlignment="center"
                 android:textSize="16sp"
-                android:text="@string/searching_routes"/>
+                android:text="@string/searching_routes"
+                android:background="@color/defaultWhite"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textAlignment="center"
                 android:textSize="16sp"
-                android:text="@string/searching_stops" />
-        </LinearLayout>
-    </LinearLayout>
+                android:text="@string/searching_stops"
+                android:background="@color/defaultWhite"/>
+        </TableRow>
+
+    </TableLayout>
 </LinearLayout>

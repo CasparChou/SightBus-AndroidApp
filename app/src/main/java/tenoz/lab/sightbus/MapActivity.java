@@ -1,21 +1,14 @@
 package tenoz.lab.sightbus;
 
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -59,9 +52,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        /*
-                 *  Initial helpers & utils
-                 */
+        Helpers.initialHomeBtnActionbar(this);
+        overridePendingTransition(R.anim.translate_in, R.anim.translate_out);
+
         mapUtils.setContext( getApplicationContext() );
         mapListeners.setMapUtil( mapUtils );
         mapUtils.setListener( mapListeners );
@@ -70,20 +63,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        overridePendingTransition(R.anim.translate_in, R.anim.translate_out);
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setBackgroundDrawable(ContextCompat.getDrawable(this, R.color.colorPrimary));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setElevation(0);
-        final Drawable homeIcon = ContextCompat.getDrawable(this,R.drawable.abc_ic_ab_back_material);
-        homeIcon.setColorFilter(ContextCompat.getColor(this,R.color.defaultGray), PorterDuff.Mode.SRC_ATOP);
-        getSupportActionBar().setHomeAsUpIndicator(homeIcon);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.argb(255,251,140,0));
-        }
+
         final EditText editText = ((EditText) findViewById(R.id.Map_SearchBar));
         editText.setOnKeyListener(new View.OnKeyListener() {
             @Override
