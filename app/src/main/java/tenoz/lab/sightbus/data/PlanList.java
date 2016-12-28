@@ -18,6 +18,7 @@ public class PlanList {
     final public Integer far;
     final public Integer time;
     final public Double avgTime;
+    final public Double weight;
 
 
     public PlanList(String route, String name, String depId, String dstId, String destination, Boolean goBack, Integer update, Integer far, Integer time, Double avgTime) {
@@ -31,6 +32,7 @@ public class PlanList {
         this.far = far;
         this.time = time;
         this.avgTime = avgTime;
+        this.weight = avgTime + time;
     }
 
     public PlanList(JSONObject object){
@@ -44,6 +46,16 @@ public class PlanList {
         this.far = object.optInt("far");
         this.time = Integer.valueOf(object.optString("time"));
         this.avgTime = object.optDouble("avgTime");
+        this.weight = this.avgTime + this.time;
+    }
+
+    public int compareTo(PlanList b){
+        if( this.weight > b.weight ){
+            return 1;
+        } else if ( this.weight > b.weight ) {
+            return 0;
+        }
+        return -1;
     }
 
     public String toString(){

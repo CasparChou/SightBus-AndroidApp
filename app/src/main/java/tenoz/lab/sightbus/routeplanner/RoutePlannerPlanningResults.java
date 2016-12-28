@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -170,12 +171,24 @@ public class RoutePlannerPlanningResults extends PageView {
                 JSONArray routes = jsonRootObject.optJSONArray("routes");
                 for( int i = 0; i < routes.length(); i++){
                     JSONObject route = routes.getJSONObject(i);
-                    PlanList stop2 = new PlanList(/*route.getString("stop"), route.getString("routes")*/route, name, depId, dstId, destination, goBack, countdown, update, far, time, avgTime);
+                    PlanList stop2 = new PlanList(route);
                     list.add(stop2);
                     Log.i("lll", stop2.toString());
                 }
+
+                for ( int i = 0; i < list.size(); i++){
+                    for ( int j = 0; j < list.size(); j++){
+                        if ( list.get(i).compareTo(list.get(j))  < 0  ){
+                            Collections.swap(list, i, j);
+//                            if( list.get(j).time < 0 ){
+//                                list.remove(j);
+//                            }
+                        }
+                    }
+                }
+
                 this.planLists = list;
-//                set
+
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (NullPointerException e){

@@ -27,13 +27,35 @@ public class PlanListAdapter extends ArrayAdapter<PlanList> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_plan_results, parent, false);
         }
-//        TextView stop = (TextView) convertView.findViewById(R.id.list_estimate_stop);
-//        TextView event = (TextView) convertView.findViewById(R.id.list_estimate_event);
-//        TextView countdown = (TextView) convertView.findViewById(R.id.list_estimate_time);
-//        TextView hint = (TextView) convertView.findViewById(R.id.list_estimate_time_hint);
-//        TextView plate = (TextView) convertView.findViewById(R.id.list_estimate_plate);
-//
-////        estimateTime(countdown, hint, estimate.countdown, estimate.update, estimate.event);
+//        RoutePlannerResult_Estimate
+//        RoutePlannerResult_Route
+//        RoutePlannerResult_Direction
+//        RoutePlannerResult_Far
+//        RoutePlannerResult_Wait
+//        RoutePlannerResult_RouteTime
+
+        TextView estimate = (TextView) convertView.findViewById(R.id.RoutePlannerResult_Estimate);
+        TextView route = (TextView) convertView.findViewById(R.id.RoutePlannerResult_Route);
+        TextView direction = (TextView) convertView.findViewById(R.id.RoutePlannerResult_Direction);
+        TextView far = (TextView) convertView.findViewById(R.id.RoutePlannerResult_Far);
+        TextView wait = (TextView) convertView.findViewById(R.id.RoutePlannerResult_Wait);
+        TextView routeTime = (TextView) convertView.findViewById(R.id.RoutePlannerResult_RouteTime);
+
+        direction.setText(plan.destination);
+
+        int waitTime = estimateTime(plan.time, plan.update);
+        int avgTime = (int) Math.round(plan.avgTime);
+
+        far.setText("經過 "+plan.far+"站");
+        route.setText(plan.name);
+        estimate.setText((waitTime + avgTime/60)+"");
+        if(waitTime == 0){
+            wait.setText("進站中");
+            estimate.setText("進站中");
+        } else {
+            wait.setText("等車"+waitTime+"分鐘");
+        }
+        routeTime.setText("路程" + avgTime/60+"分鐘");
 //        stop.setText(estimate.name+"");
 //        if(estimate.destination){
 //            ((ImageView)(convertView.findViewById(R.id.list_estimate_stop_img)))
@@ -83,41 +105,20 @@ public class PlanListAdapter extends ArrayAdapter<PlanList> {
 
 
 
-    private void estimateTime(TextView time, TextView hint, Integer countdown, Integer update, Integer event){
+    private int estimateTime(Integer countdown, Integer update){
 
         Long now = System.currentTimeMillis()/1000;
-        Long newTime = (countdown - (now - update));
-        if( event != -1){
-            if ( event == 0 ){
-                time.setText("已離站");
-                hint.setText("");
-            } else {
-                time.setText("進站中");
-                if( newTime > 0 ){
-                    hint.setText(newTime+"秒內");
-                } else {
-                    hint.setText("");
-                }
-            }
-        }
+        Long new_Time = (countdown - (now - update));
         if( countdown < 0 ){
-            time.setText("未發車");
-            hint.setText("");
-        } else if (newTime.compareTo(0L) < 0){
-            time.setText("已離站");
-            hint.setText("");
-        } else if( newTime.compareTo(60L) < 0 ){
-            time.setText("將到站");
-            hint.setText("");
-            if( newTime.compareTo(0L) > 0 ){
-                hint.setText(newTime+"秒內");
-            }
-        } else if( (new Long(newTime/60)).compareTo(60L) < 0 ){
-            time.setText( newTime/60 + "");
-            hint.setText("分鐘");
+            return -1;
+        } else if (new_Time.compareTo(0L) < 0){
+            return 0;
+        } else if( new_Time.compareTo(60L) < 0 ){
+           return -1;
+        } else if( (new Long(new_Time/60)).compareTo(60L) < 0 ){
+            return (int) (new_Time/60);
         } else {
-            time.setText( newTime/3600 + "");
-            hint.setText("小時"+(newTime - 3600 * (newTime/3600))%3600+"秒");
+            return -2;
         }
     }
 }
