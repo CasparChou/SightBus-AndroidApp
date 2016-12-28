@@ -1,6 +1,7 @@
 package tenoz.lab.sightbus.data;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,19 +42,31 @@ public class PlanListAdapter extends ArrayAdapter<PlanList> {
         TextView wait = (TextView) convertView.findViewById(R.id.RoutePlannerResult_Wait);
         TextView routeTime = (TextView) convertView.findViewById(R.id.RoutePlannerResult_RouteTime);
 
-        direction.setText(plan.destination);
+        direction.setText("往"+plan.destination);
 
         int waitTime = estimateTime(plan.time, plan.update);
         int avgTime = (int) Math.round(plan.avgTime);
 
         far.setText("經過 "+plan.far+"站");
         route.setText(plan.name);
-        estimate.setText((waitTime + avgTime/60)+"");
+        estimate.setText((waitTime + avgTime/60)+"分鐘");
         if(waitTime == 0){
             wait.setText("進站中");
             estimate.setText("進站中");
+            estimate.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_apporaching));
+
+        } else if (waitTime == -1){
+            wait.setText("等不到車");
+            estimate.setText("不建議");
+            estimate.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_not_recommend));
+        } else if (waitTime == -2){
+            wait.setText("等車超過1小時");
+            estimate.setText("不建議");
+            estimate.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_not_recommend));
+
         } else {
             wait.setText("等車"+waitTime+"分鐘");
+            estimate.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_orange));
         }
         routeTime.setText("路程" + avgTime/60+"分鐘");
 //        stop.setText(estimate.name+"");

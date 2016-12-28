@@ -9,4 +9,5 @@
     <color name="maybeGray">#c16c00</color>
     <color name="trulyGray">#949494</color>
     <color name="defaultWhite">#fbfbfb</color>
+    <color name="isGood">#33d26e</color>
 </resources>
