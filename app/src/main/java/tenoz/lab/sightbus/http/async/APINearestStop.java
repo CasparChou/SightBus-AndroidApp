@@ -1,17 +1,8 @@
 package tenoz.lab.sightbus.http.async;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.location.Location;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Button;
 
@@ -91,7 +82,7 @@ public class APINearestStop extends AsyncTask<Activity,Integer,String>{
             String name = "";
             for( int i = 0; i < 1; i++){
                 name = routes.getJSONObject(i).getString("name");
-                if( !routes.getJSONObject(i).getString("name").equals(((Button)this.activity.findViewById(R.id.main_nearest_btn)).getText()) ){
+                /*if( !routes.getJSONObject(i).getString("name").equals(((Button)this.activity.findViewById(R.id.main_nearest_btn)).getText()) ){
 
                     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this.activity.getApplicationContext());
                     mBuilder.setSmallIcon(R.drawable.marker);
@@ -112,8 +103,8 @@ public class APINearestStop extends AsyncTask<Activity,Integer,String>{
 
                     NotificationManager mNotificationManager = (NotificationManager) this.activity.getSystemService(Context.NOTIFICATION_SERVICE);
                     mNotificationManager.notify(0, mBuilder.build());
-                }
-                ((Button)this.activity.findViewById(R.id.main_nearest_btn)).setText(name);
+                }*/
+                ((Button)this.activity.findViewById(R.id.main_nearest)).setText(name);
             }
 
 

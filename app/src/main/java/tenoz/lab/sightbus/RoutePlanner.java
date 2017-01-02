@@ -20,8 +20,8 @@ public class RoutePlanner extends AppCompatActivity {
 
     private ArrayList<PageView> pageList;
     private ViewPager mViewPager;
-    private String departure;
-    private String destination;
+    private String departure = "";
+    private String destination = "";
     private RoutePlannerPageAdapter viewPagerAdapter;
 
     @Override

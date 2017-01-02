@@ -59,6 +59,7 @@ public class PlanListAdapter extends ArrayAdapter<PlanList> {
             wait.setText("等不到車");
             estimate.setText("不建議");
             estimate.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_not_recommend));
+
         } else if (waitTime == -2){
             wait.setText("等車超過1小時");
             estimate.setText("不建議");

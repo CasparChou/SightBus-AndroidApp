@@ -2,13 +2,16 @@ package tenoz.lab.sightbus.routeplanner;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -25,6 +28,7 @@ import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import tenoz.lab.sightbus.EstimateStopsActivity;
 import tenoz.lab.sightbus.R;
 import tenoz.lab.sightbus.RoutePlanner;
 import tenoz.lab.sightbus.data.PlanList;
@@ -37,11 +41,13 @@ public class RoutePlannerPlanningResults extends PageView {
     private View view;
     private int image_tick = 0;
     private int cwnd = 0;
-    private String destination;
-    private String departure;
+    private String destination = "" ;
+    private String departure = "";
     private String endpoint = "http://sightbus.tenoz.asia/routes/plan/?dep=%s&dst=%s";
-    private ArrayList<PlanList> planList;
+    private ArrayList<PlanList> planList = new ArrayList<>();
     private String currentQuering = "";
+    private PlanListAdapter adapter;
+
 
     public RoutePlannerPlanningResults(final Context context, final Activity activity) {
         super(context);
@@ -49,7 +55,7 @@ public class RoutePlannerPlanningResults extends PageView {
         this.activity = (RoutePlanner)activity;
         this.context = context;
         addView(view);
-
+        planning();
 
         new Timer().scheduleAtFixedRate(new TimerTask(){
             @Override
@@ -57,48 +63,90 @@ public class RoutePlannerPlanningResults extends PageView {
             if( ((RoutePlanner) activity).getViewPager().getCurrentItem() == 2 ){
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        image_tick = (image_tick+1)%3;
-                        ((ImageView)view.findViewById(R.id.RoutePlannerResult_img))
-                            .setImageDrawable(
-                                ContextCompat.getDrawable(
-                                        context,
-                                        context.getResources().getIdentifier("tunnel256_"+image_tick, "drawable", context.getPackageName())
-                                )
-                            );
-                        if( image_tick%5 == 0 ){
-                            planning();
-                        }
+                    image_tick = (image_tick+1)%3;
+                    ((ImageView)view.findViewById(R.id.RoutePlannerResult_img))
+                        .setImageDrawable(
+                            ContextCompat.getDrawable(
+                                context,
+                                context.getResources().getIdentifier("tunnel256_"+image_tick, "drawable", context.getPackageName())
+                            )
+                        );
+                        departure = ((RoutePlanner) activity).getDeparture();
+                        destination = ((RoutePlanner) activity).getDestination();
+                        if( !departure.equals("") && !destination.equals("") )
+                            ((TextView) view.findViewById(R.id.RoutePlanningResults_Title))
+                                    .setText(departure.concat(" 往 ").concat(destination));
+                    if( image_tick%5 == 0 ){
+                        planning();
+                    }
                     }
                 });
 
             }
             }
         },0,500);
+
+        ListView listView = (ListView) findViewById(R.id.RoutePlanningResults_ResultsList);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String dep = ((PlanList) parent.getAdapter().getItem(position)).depId;
+                String dst = ((PlanList) parent.getAdapter().getItem(position)).dstId;
+
+                Intent stopsEstimate = new Intent(activity.getApplicationContext(), EstimateStopsActivity.class);
+                stopsEstimate.putExtra("Dep", dep);
+                stopsEstimate.putExtra("Dst", dst);
+                activity.startActivity(stopsEstimate);
+//                String buffer = name+":"+routes;
+//                String cache = name+":"+routes+";";
+//                SharedPreferences pref = getSharedPreferences("search.sightbus", MODE_PRIVATE);
+//                String current = pref.getString("stops","");
+//                Log.i("Current", current);
+//                ArrayList<String> split = new ArrayList<String>();
+//                Collections.addAll(split, current.split(";"));
+//                Log.i("CACHE", cache.substring(0,cache.length()-1));
+//                if(!split.contains(buffer)){
+//                    if(split.size() > 5){
+//                        for( int i = 0; i <  4; i++){
+//                            cache += split.get(i)+";";
+//                        }
+//                    } else {
+//                        cache += current;
+//                    }
+//                } else {
+//                    for( String in : split){
+//                        if( !in.equals(buffer) ){
+//                            Log.i("SPLIT", in);
+//                            cache += in+";";
+//                        }
+//
+//                    }
+//                }
+//                Log.i("Next", cache);
+//                pref.edit().remove("stops").commit();
+//                pref.edit().putString("stops",cache).commit();
+
+            }
+        });
     }
 
     public void planning() {
-        departure = activity.getDeparture();
-        destination = activity.getDestination();
-        if ( !currentQuering.equals(departure+","+destination)) {
-            currentQuering = (departure+","+destination);
-            (view.findViewById(R.id.RoutePlanningResults_ResultsList)).setVisibility(INVISIBLE);
-            (view.findViewById(R.id.RoutePlanningResults_Not_Found)).setVisibility(VISIBLE);
-        } else {
-            return;
-        }
         new android.os.Handler().postDelayed(
-            new Runnable() {
-                public void run() {
-                    if( cwnd < 5 && (departure!= null && departure.length()>0) && (destination!= null && destination.length()>0 )){
-                        Log.i("Run Plan", departure+"  ,  "+destination);
-                        cwnd++;
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if (cwnd < 5 && (departure != null && departure.length() > 0) && (destination != null && destination.length() > 0)) {
+
+                            Log.i("Run Plan", departure + "  ,  " + destination);
+                            cwnd++;
 //                        ((TextView)(findViewById(R.id.RoutePlanning_Hint))).setText("尋找中...");
-                        new APIRoutePlanner().execute();
+                            new APIRoutePlanner().execute();
+
+                        }
 
                     }
-                }
-            },
-            1000+ cwnd*1000);
+                },
+                1000 + cwnd * 1000);
 
     }
     public View getView(){
@@ -109,18 +157,23 @@ public class RoutePlannerPlanningResults extends PageView {
     public void setResultList(ArrayList<PlanList> planList) {
         (view.findViewById(R.id.RoutePlanningResults_Not_Found)).setVisibility(INVISIBLE);
         (view.findViewById(R.id.RoutePlanningResults_ResultsList)).setVisibility(VISIBLE);
-        this.planList = planList;
-//        (findViewById(R.id.SearchRoutes_Not_Found)).setVisibility(View.INVISIBLE);
-//        try {
-            PlanListAdapter adapter = new PlanListAdapter(this.getContext(), this.planList);
-            ListView listView = (ListView) findViewById(R.id.RoutePlanningResults_ResultsList);
-            listView.setAdapter(adapter);
-//            if(routesList.size() == 0){
-//                (findViewById(R.id.SearchRoutes_Not_Found)).setVisibility(View.VISIBLE);
-//            }
-//        }catch (NullPointerException e){
-//            Toast.makeText(activity.getApplicationContext(), "應用程式錯誤", Toast.LENGTH_LONG);
-//        }
+        try {
+            if(this.planList.isEmpty()){
+
+                this.planList = planList;
+                adapter = new PlanListAdapter(this.getContext(), this.planList);
+                ListView listView = (ListView) findViewById(R.id.RoutePlanningResults_ResultsList);
+                listView.setAdapter(adapter);
+
+            } else {
+                this.planList.clear();
+                this.planList.addAll(planList);
+                adapter.notifyDataSetChanged();
+            }
+
+        }catch (NullPointerException e){
+            Toast.makeText(activity.getApplicationContext(), "應用程式錯誤", Toast.LENGTH_LONG);
+        }
     }
     public class APIRoutePlanner extends AsyncTask<Void,Integer,String> {
 

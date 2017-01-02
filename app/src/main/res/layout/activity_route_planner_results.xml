@@ -26,7 +26,7 @@
             android:paddingBottom="35sp"
             android:textSize="30sp"
             android:textAlignment="center"
-            android:text="@string/searching_stops"
+            android:text="@string/route_planning"
             android:textColor="?android:attr/textColorTertiary" />
         <EditText
             android:id="@+id/RoutePlanningResults_SearchBar"
