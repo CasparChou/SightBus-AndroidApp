@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationManager locationManager;
     private int backPress = 0;
-    private String location = "";
+    private String locality = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +55,13 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run(){
                     Log.i("Refreshing","Nearest stop refreshing");
+                    updateLocation();
+                    getCityName(getLastKnownLocation());
                     updateNearestBtn();
                 }
             },0,10000);
+        } else {
+            requestPermission();
         }
 //        ((TextView)findViewById(R.id.main_location)).setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -67,11 +71,13 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //            }
 //        });
+        updateLocation();
         getCityName(getLastKnownLocation());
     }
     private void updateNearestBtn(){
         getCityName(getLastKnownLocation());
         updateLocation();
+        new APIWeather().execute();
         Api.getNearest(MainActivity.this);
     }
     private void requestPermission() {
@@ -149,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
             case 8: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     updateNearestBtn();
+//                    Toast.makeText(getApplicationContext(), "權限", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "有限的功能使用", Toast.LENGTH_SHORT).show();
                 }
@@ -211,16 +218,26 @@ public class MainActivity extends AppCompatActivity {
                     results = coder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                 } catch (IOException e) {
                     // nothing
+                } catch (NullPointerException e){
+
                 }
                 return results;
             }
 
             @Override
             protected void onPostExecute(List<Address> results) {
-                if(results.size()>0){
-                    String locality = results.get(0).getLocality();
-                    ((TextView)findViewById(R.id.main_location)).setText(locality);
+                try {
+                    if (results.size() > 0) {
+                        for( int i = 0; i < results.size(); i++){
+                            Log.e("LOCATION", results.get(i).toString());
+                        }
+                        locality = results.get(0).getLocality();
+                        ((TextView) findViewById(R.id.main_location)).setText(locality);
+                    }
+                } catch (NullPointerException e){
+                    e.printStackTrace();
                 }
+
             }
         }.execute();
     }
@@ -235,12 +252,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(Void... unused) {
-            if( "".equals(location) ){
+            if( "".equals(locality) ){
+                Log.e("WeatherERR", "Location Not Found");
                 cancel(true);
                 return "";
             }
             try {
-                URL url = new URL(String.format(endpoint, URLEncoder.encode(location, "utf-8")));
+                URL url = new URL(String.format(endpoint, URLEncoder.encode(locality, "utf-8")));
                 Log.i("Network", "connect");
                 URLConnection conn = url.openConnection();
                 InputStream in = conn.getInputStream();
@@ -266,17 +284,22 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String msg) {
             super.onPostExecute(msg);
-            Log.i("PostExec", fetch);
+            Log.i("WeatherPostExeucte", fetch);
             try {
                 parserWeather();
             } catch (JSONException e) {
                 e.printStackTrace();
+            } catch (NullPointerException e){
+                e.printStackTrace();
             }
         }
 
-        private void parserWeather() throws JSONException {
+        private void parserWeather() throws JSONException, NullPointerException {
+            Log.i("Log", fetch);
             JSONObject data = new JSONObject(fetch);
-            ((TextView)findViewById(R.id.Main_Temp)).setText(data.optJSONObject("results").optString("temp"));
+            ((TextView)findViewById(R.id.Main_Temp)).setText(data.optJSONObject("results").optString("temp")+"°C");
+            ((TextView)findViewById(R.id.Main_pop)).setText(data.optJSONObject("results").optString("pop")+"%");
+
 
         }
     }

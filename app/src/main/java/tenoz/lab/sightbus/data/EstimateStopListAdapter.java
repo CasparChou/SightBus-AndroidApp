@@ -1,6 +1,7 @@
 package tenoz.lab.sightbus.data;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,13 +38,13 @@ public class EstimateStopListAdapter extends ArrayAdapter<EstimateStopList> {
                 convertView.findViewById(R.id.list_estimate_stop_from_destination_time_layout),
                 convertView.findViewById(R.id.list_estimate_stop_from_destination_text),
                 convertView.findViewById(R.id.list_estimate_stop_from_destination_time),
-                convertView.findViewById(R.id.list_estimate_stop_from_destination_time_hint)
+//                convertView.findViewById(R.id.list_estimate_stop_from_destination_time_hint)
         };
         View[] goDeparture = {
                 convertView.findViewById(R.id.list_estimate_stop_from_departure_time_layout),
                 convertView.findViewById(R.id.list_estimate_stop_from_departure_text),
                 convertView.findViewById(R.id.list_estimate_stop_from_departure_time),
-                convertView.findViewById(R.id.list_estimate_stop_from_departure_time_hint)
+//                convertView.findViewById(R.id.list_estimate_stop_from_departure_time_hint)
         };
 
         ((TextView)convertView.findViewById(R.id.list_estimate_stop_route)).setText(estimate.routeName+"");
@@ -51,29 +52,28 @@ public class EstimateStopListAdapter extends ArrayAdapter<EstimateStopList> {
             ((TextView) goDestination[StopListView.TITLE_TEXT.ordinal()]).setText("往"+estimate.goDestination.destination);
             estimateTime(
                     (TextView) goDestination[StopListView.LEFT_TIME.ordinal()],
-                    (TextView) goDestination[StopListView.TIME_HINT.ordinal()],
                     estimate.goDestination.countDown,
                     estimate.goDestination.updateTime
             );
         } else {
             ((TextView) goDestination[StopListView.TITLE_TEXT.ordinal()]).setText("");
             ((TextView) goDestination[StopListView.LEFT_TIME.ordinal()]).setText("不經此站");
-            ((TextView) goDestination[StopListView.TIME_HINT.ordinal()]).setText("");
         }
 
 
         if( !estimate.goDeparture.destination.equals("null") ) {
             ((TextView) goDeparture[StopListView.TITLE_TEXT.ordinal()]).setText("往" + estimate.goDeparture.destination);
             estimateTime(
-                    (TextView) goDeparture[StopListView.LEFT_TIME.ordinal()],
-                    (TextView) goDeparture[StopListView.TIME_HINT.ordinal()],
-                    estimate.goDeparture.countDown,
-                    estimate.goDeparture.updateTime
+                (TextView) goDeparture[StopListView.LEFT_TIME.ordinal()],
+                estimate.goDeparture.countDown,
+                estimate.goDeparture.updateTime
             );
         } else {
-            ((TextView) goDeparture[StopListView.TITLE_TEXT.ordinal()]).setText("");
+            ((TextView) goDeparture[StopListView.TITLE_TEXT.ordinal()]).setText((estimate.goDeparture.toString().equals("null")?"去程":"回程"));
             ((TextView) goDeparture[StopListView.LEFT_TIME.ordinal()]).setText("不經此站");
-            ((TextView) goDeparture[StopListView.TIME_HINT.ordinal()]).setText("");
+            ((TextView) goDeparture[StopListView.LEFT_TIME.ordinal()]).setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_white));
+            ((TextView) goDeparture[StopListView.LEFT_TIME.ordinal()]).setTextColor(ContextCompat.getColor(getContext(),R.color.defaultGray));
+//            ((TextView) goDeparture[StopListView.TIME_HINT.ordinal()]).setText("");
         }
 
 
@@ -117,7 +117,7 @@ public class EstimateStopListAdapter extends ArrayAdapter<EstimateStopList> {
 
 
 
-    private void estimateTime(TextView time, TextView hint, Integer countdown, Integer update){
+    private void estimateTime(TextView time, Integer countdown, Integer update){
 
         Long now;
         Long newTime;
@@ -126,7 +126,7 @@ public class EstimateStopListAdapter extends ArrayAdapter<EstimateStopList> {
             newTime = (countdown - (now - update));
         }catch (NullPointerException n){
             time.setText("N");
-            hint.setText("N");
+//            hint.setText("N");
             return;
         }
 //        if( event != -1){
@@ -144,22 +144,32 @@ public class EstimateStopListAdapter extends ArrayAdapter<EstimateStopList> {
 //        }
         if( countdown < 0 ){
             time.setText("未發車");
-            hint.setText("");
+            time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_not_recommend));
+            time.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
+//            hint.setText("");
         } else if (newTime.compareTo(0L) < 0){
             time.setText("已離站");
-            hint.setText("");
+            time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_not_recommend));
+            time.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
+//            hint.setText("");
         } else if( newTime.compareTo(60L) < 0 ){
             time.setText("將到站");
-            hint.setText("");
+            time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_apporaching));
+            time.setTextColor(ContextCompat.getColor(getContext(),R.color.isGood));
+//            hint.setText("");
             if( newTime.compareTo(0L) > 0 ){
-                hint.setText(newTime+"秒內");
+//                hint.setText(newTime+"秒內");
             }
         } else if( (new Long(newTime/60)).compareTo(60L) < 0 ){
-            time.setText( newTime/60 + "");
-            hint.setText("分鐘");
+            time.setText( newTime/60 + "分鐘");
+            time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_orange));
+            time.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
+//            hint.setText("分鐘");
         } else {
-            time.setText( newTime/3600 + "");
-            hint.setText("小時"+(newTime - 3600 * (newTime/3600))%3600+"秒");
+            time.setText( "> 1小時");
+            time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_not_recommend));
+            time.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
+//            hint.setText("小時"+(newTime - 3600 * (newTime/3600))%3600+"秒");
         }
     }
 }

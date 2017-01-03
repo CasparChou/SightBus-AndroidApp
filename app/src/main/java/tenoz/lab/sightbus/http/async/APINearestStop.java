@@ -52,6 +52,8 @@ public class APINearestStop extends AsyncTask<Activity,Integer,String>{
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch ( NullPointerException e ){
+
         }
         return fetch;
     }

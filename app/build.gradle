@@ -37,6 +37,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:9.6.0'
     compile 'com.google.android.gms:play-services:9.6.0'
     compile 'com.commonsware.cwac:merge:1.1.+'
+    compile 'com.google.code.gson:gson:2.6.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

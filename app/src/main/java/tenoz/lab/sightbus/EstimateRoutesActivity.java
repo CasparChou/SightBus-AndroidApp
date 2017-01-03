@@ -53,16 +53,19 @@ public class EstimateRoutesActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estimate_route);
 
-        Helpers.initialActionbar(this);
-        setup();
-        Api.getEstimateRoute(this);
-    }
-
-    private void setup(){
         routeId = getIntent().getExtras().getString("Route ID");
         routeName = getIntent().getExtras().getString("Route Name");
         departure = getIntent().getExtras().getString("Route Departure");
         destination = getIntent().getExtras().getString("Route Destination");
+//        listGo = (new Gson().fromJson(getIntent().getExtras().getString("GoList"), EstimateList.class));
+
+
+        Helpers.initialActionbar(this);
+        Api.getEstimateRoute(this);
+        setup();
+    }
+
+    private void setup(){
 
         getSupportActionBar().setElevation(0);
         getSupportActionBar().setBackgroundDrawable(ContextCompat.getDrawable(this, R.color.colorPrimary));
@@ -108,8 +111,6 @@ public class EstimateRoutesActivity extends AppCompatActivity{
 
         pageGo = ((EstimateRoutesPage)pageList.get(0)).getView();
         pageBack = ((EstimateRoutesPage)pageList.get(1)).getView();
-        listGo = (ListView) pageGo.findViewById(R.id.EstimateRoutes_EstimateList);
-        listBack = (ListView) pageBack.findViewById(R.id.EstimateRoutes_EstimateList);
 
         new Timer().scheduleAtFixedRate(new TimerTask(){
             @Override
@@ -135,6 +136,12 @@ public class EstimateRoutesActivity extends AppCompatActivity{
 //                }
             }
         },0, 10*1000);
+        listGo = (ListView) pageGo.findViewById(R.id.EstimateRoutes_EstimateList);
+        listBack = (ListView) pageBack.findViewById(R.id.EstimateRoutes_EstimateList);
+        setEstimateList(
+                (ArrayList<EstimateList>) getIntent().getExtras().getSerializable("GoList"),
+                (ArrayList<EstimateList>) getIntent().getExtras().getSerializable("BackList")
+        );
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

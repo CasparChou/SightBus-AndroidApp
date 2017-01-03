@@ -82,7 +82,7 @@ public class EstimateStopList {
                         new Date(new Long(this.updateTime))
                 );
             }catch (NullPointerException n){
-                return " [ null ] ";
+                return "null";
             }
         }
     }

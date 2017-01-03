@@ -45,15 +45,8 @@
             android:layout_width="60sp"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:singleLine="true"
-            android:gravity="center"/>
-        <TextView
-            android:id="@+id/list_estimate_time_hint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text=""
             android:gravity="center"/>
     </LinearLayout>
     <LinearLayout
@@ -90,11 +83,11 @@
             android:textSize="23sp"
             android:singleLine="true"
             android:textColor="@color/defaultGray" />
-        <TextView
-            android:id="@+id/list_estimate_event"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@android:color/darker_gray" />
+        <!--<TextView-->
+            <!--android:id="@+id/list_estimate_event"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="16sp"-->
+            <!--android:textColor="@android:color/darker_gray" />-->
     </LinearLayout>
 </LinearLayout>

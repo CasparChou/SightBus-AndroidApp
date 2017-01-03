@@ -54,20 +54,24 @@ public class PlanListAdapter extends ArrayAdapter<PlanList> {
             wait.setText("進站中");
             estimate.setText("進站中");
             estimate.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_apporaching));
-
+            estimate.setTextColor(ContextCompat.getColor(getContext(),R.color.isGood));
         } else if (waitTime == -1){
             wait.setText("等不到車");
             estimate.setText("不建議");
             estimate.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_not_recommend));
+            estimate.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
 
         } else if (waitTime == -2){
-            wait.setText("等車超過1小時");
+            wait.setText("等車 >1小時");
             estimate.setText("不建議");
             estimate.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_not_recommend));
+            estimate.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
 
         } else {
             wait.setText("等車"+waitTime+"分鐘");
             estimate.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.round_text_orange));
+            estimate.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
+
         }
         routeTime.setText("路程" + avgTime/60+"分鐘");
 //        stop.setText(estimate.name+"");

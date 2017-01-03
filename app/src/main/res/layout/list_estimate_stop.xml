@@ -13,44 +13,15 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_height="match_parent"
-        android:layout_width="match_parent">
-
-        <!-- From Destination Estimate Time -->
-        <LinearLayout
-            android:id="@+id/list_estimate_stop_from_destination_time_layout"
-            android:layout_width="100sp"
-            android:layout_height="80sp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/list_estimate_stop_from_destination_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"/>
-            <TextView
-                android:id="@+id/list_estimate_stop_from_destination_time"
-                android:layout_width="100sp"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                android:singleLine="true"
-                android:gravity="center"/>
-            <TextView
-                android:id="@+id/list_estimate_stop_from_destination_time_hint"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:text=""
-                android:gravity="center"/>
-        </LinearLayout>
+        android:layout_width="match_parent"
+        android:gravity="center_vertical">
         <!-- Route Info -->
         <LinearLayout
             android:layout_width="80sp"
             android:layout_height="wrap_content"
             android:paddingTop="13sp"
             android:paddingBottom="15sp"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
@@ -61,20 +32,54 @@
                 android:singleLine="true"
                 android:textAlignment="center"
                 android:textColor="@color/defaultGray" />
+            <!--<TextView-->
+            <!--android:id="@+id/list_estimate_stop_dst"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="16sp"-->
+            <!--android:textColor="@android:color/darker_gray" />-->
+        </LinearLayout>
+
+
+        <!-- From Destination Estimate Time -->
+        <LinearLayout
+            android:id="@+id/list_estimate_stop_from_destination_time_layout"
+            android:layout_width="100sp"
+            android:layout_height="80sp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
             <TextView
-                android:id="@+id/list_estimate_stop_dst"
+                android:id="@+id/list_estimate_stop_from_destination_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="@android:color/darker_gray" />
+                android:textAlignment="center"/>
+            <TextView
+                android:id="@+id/list_estimate_stop_from_destination_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:layout_marginLeft="20sp"
+                android:layout_marginRight="20sp"
+                android:singleLine="true"
+                android:gravity="center"/>
+            <!--<TextView-->
+                <!--android:id="@+id/list_estimate_stop_from_destination_time_hint"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textAlignment="center"-->
+                <!--android:text=""-->
+                <!--android:gravity="center"/>-->
         </LinearLayout>
+
         <!-- From Departure Estimate Time -->
         <LinearLayout
             android:id="@+id/list_estimate_stop_from_departure_time_layout"
             android:layout_width="100sp"
             android:layout_height="80sp"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/list_estimate_stop_from_departure_text"
@@ -83,18 +88,13 @@
                 android:textAlignment="center"/>
             <TextView
                 android:id="@+id/list_estimate_stop_from_departure_time"
-                android:layout_width="100sp"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                android:singleLine="true"
-                android:gravity="center"/>
-            <TextView
-                android:id="@+id/list_estimate_stop_from_departure_time_hint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:text=""
+                android:layout_marginLeft="20sp"
+                android:layout_marginRight="20sp"
+                android:textSize="18sp"
+                android:singleLine="true"
                 android:gravity="center"/>
         </LinearLayout>
     </LinearLayout>

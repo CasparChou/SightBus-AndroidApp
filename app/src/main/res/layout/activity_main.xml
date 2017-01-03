@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:elevation="8dp"
+        android:paddingBottom="30sp"
         android:orientation="vertical"
         android:background="@color/colorPrimary">
         <Button
@@ -52,10 +53,10 @@
                     android:layout_width="match_parent"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:textSize="25sp"
                     android:textColor="@color/defaultGray"
                     android:textAlignment="center"
-                    android:text="20°C"/>
+                    android:text="20°C"
+                    android:textSize="20sp"/>
                 <TextView
                     android:id="@+id/main_location"
                     android:background="@color/colorPrimary"

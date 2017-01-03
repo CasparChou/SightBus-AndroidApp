@@ -2,13 +2,11 @@ package tenoz.lab.sightbus.routeplanner;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,7 +26,6 @@ import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import tenoz.lab.sightbus.EstimateStopsActivity;
 import tenoz.lab.sightbus.R;
 import tenoz.lab.sightbus.RoutePlanner;
 import tenoz.lab.sightbus.data.PlanList;
@@ -86,17 +83,17 @@ public class RoutePlannerPlanningResults extends PageView {
             }
         },0,500);
 
-        ListView listView = (ListView) findViewById(R.id.RoutePlanningResults_ResultsList);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String dep = ((PlanList) parent.getAdapter().getItem(position)).depId;
-                String dst = ((PlanList) parent.getAdapter().getItem(position)).dstId;
-
-                Intent stopsEstimate = new Intent(activity.getApplicationContext(), EstimateStopsActivity.class);
-                stopsEstimate.putExtra("Dep", dep);
-                stopsEstimate.putExtra("Dst", dst);
-                activity.startActivity(stopsEstimate);
+//        ListView listView = (ListView) findViewById(R.id.RoutePlanningResults_ResultsList);
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                String dep = ((PlanList) parent.getAdapter().getItem(position)).depId;
+//                String dst = ((PlanList) parent.getAdapter().getItem(position)).dstId;
+//
+//                Intent stopsEstimate = new Intent(activity.getApplicationContext(), EstimateStopsActivity.class);
+//                stopsEstimate.putExtra("Dep", dep);
+//                stopsEstimate.putExtra("Dst", dst);
+//                activity.startActivity(stopsEstimate);
 //                String buffer = name+":"+routes;
 //                String cache = name+":"+routes+";";
 //                SharedPreferences pref = getSharedPreferences("search.sightbus", MODE_PRIVATE);
@@ -126,8 +123,8 @@ public class RoutePlannerPlanningResults extends PageView {
 //                pref.edit().remove("stops").commit();
 //                pref.edit().putString("stops",cache).commit();
 
-            }
-        });
+//            }
+//        });
     }
 
     public void planning() {

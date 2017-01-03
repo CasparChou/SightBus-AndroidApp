@@ -38,9 +38,11 @@
                     android:id="@+id/RoutePlannerResult_Route"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:maxWidth="140sp"
                     android:padding="3sp"
                     android:layout_marginLeft="5sp"
                     android:textSize="20sp"
+                    android:singleLine="true"
                     android:textAlignment="center"/>
                 <TextView
                     android:id="@+id/RoutePlannerResult_Direction"
@@ -70,7 +72,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="-13sp"
                 android:textSize="15sp"
                 android:textAlignment="center"/>
             <ImageView
@@ -82,7 +83,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="-13sp"
                 android:textSize="15sp"
                 android:textAlignment="center"/>
             <ImageView
@@ -94,7 +94,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="-13sp"
                 android:textSize="15sp"
                 android:textAlignment="center"/>
         </LinearLayout>

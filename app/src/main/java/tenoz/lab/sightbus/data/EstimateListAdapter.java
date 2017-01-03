@@ -31,12 +31,8 @@ public class EstimateListAdapter extends ArrayAdapter<EstimateList> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_estimate, parent, false);
         }
         TextView stop = (TextView) convertView.findViewById(R.id.list_estimate_stop);
-        TextView event = (TextView) convertView.findViewById(R.id.list_estimate_event);
         TextView countdown = (TextView) convertView.findViewById(R.id.list_estimate_time);
-        TextView hint = (TextView) convertView.findViewById(R.id.list_estimate_time_hint);
-        TextView plate = (TextView) convertView.findViewById(R.id.list_estimate_plate);
 
-        estimateTime(countdown, hint, estimate.countdown, estimate.update, estimate.event);
         stop.setText(estimate.name+"");
         if(estimate.destination){
             ((ImageView)(convertView.findViewById(R.id.list_estimate_stop_img)))
@@ -48,36 +44,20 @@ public class EstimateListAdapter extends ArrayAdapter<EstimateList> {
             ((ImageView)(convertView.findViewById(R.id.list_estimate_stop_img)))
                     .setImageDrawable(ContextCompat.getDrawable(getContext(),R.drawable.stop_both));
         }
-        if( estimate.name.length() > 9 ){
-            stop.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-            stop.setMarqueeRepeatLimit(100);
-            stop.setSelected(true);
-        }
-        if( estimate.plate != "null" ){
-            plate.setText(estimate.plate+"");
-            convertView.findViewById(R.id.list_estimate_plate_layout).setVisibility(View.VISIBLE);
-            convertView.findViewById(R.id.list_estimate_time_layout).setVisibility(View.INVISIBLE);
-            if(estimate.event != -1){
-                if( estimate.event == 0 ){
-//                    ((ImageView)(convertView.findViewById(R.id.list_estimate_bus))).setImageResource(R.drawable.bus_gray64);
-                } else {
-//                    ((ImageView)(convertView.findViewById(R.id.list_estimate_bus))).setImageResource(R.drawable.bus64);
-                }
+
+        if(!estimate.isPath){
+            estimateTime(countdown, estimate.countdown, estimate.update, estimate.event);
+            if( estimate.name.length() > 9 ){
+                stop.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                stop.setMarqueeRepeatLimit(100);
+                stop.setSelected(true);
             }
         } else {
-            convertView.findViewById(R.id.list_estimate_plate_layout).setVisibility(View.INVISIBLE);
-            convertView.findViewById(R.id.list_estimate_time_layout).setVisibility(View.VISIBLE);
+            countdown.setText("載入中");
+            countdown.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_not_recommend));
+            countdown.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
         }
 
-        if(estimate.event != -1){
-            event.setText(estimate.event == 0 ?"已經離站。":"進站中");
-            stop.setHeight(110);
-            event.setHeight(80);
-
-        } else {
-            stop.setHeight(100);
-            event.setHeight(0);
-        }
 
         return convertView;
     }
@@ -86,41 +66,49 @@ public class EstimateListAdapter extends ArrayAdapter<EstimateList> {
 
 
 
-    private void estimateTime(TextView time, TextView hint, Integer countdown, Integer update, Integer event){
+    private void estimateTime(TextView time, Integer countdown, Integer update, Integer event){
 
         Long now = System.currentTimeMillis()/1000;
         Long newTime = (countdown - (now - update));
         if( event != -1){
             if ( event == 0 ){
                 time.setText("已離站");
-                hint.setText("");
+                time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_not_recommend));
+                time.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
             } else {
                 time.setText("進站中");
-                if( newTime > 0 ){
-                    hint.setText(newTime+"秒內");
-                } else {
-                    hint.setText("");
-                }
+                time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_apporaching));
+                time.setTextColor(ContextCompat.getColor(getContext(),R.color.isGood));
             }
         }
-        if( countdown < 0 ){
+        if( countdown == -99 ){
             time.setText("未發車");
-            hint.setText("");
+            time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_not_recommend));
+            time.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
+        } else if( countdown < 0 ){
+            time.setText("已離站");
+            time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_not_recommend));
+            time.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
         } else if (newTime.compareTo(0L) < 0){
             time.setText("已離站");
-            hint.setText("");
+            time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_not_recommend));
+            time.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
         } else if( newTime.compareTo(60L) < 0 ){
             time.setText("將到站");
-            hint.setText("");
-            if( newTime.compareTo(0L) > 0 ){
-                hint.setText(newTime+"秒內");
-            }
+            time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_apporaching));
+            time.setTextColor(ContextCompat.getColor(getContext(),R.color.isGood));
         } else if( (new Long(newTime/60)).compareTo(60L) < 0 ){
-            time.setText( newTime/60 + "");
-            hint.setText("分鐘");
+            time.setText( newTime/60 + " 分鐘");
+            time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_orange));
+            time.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
+            if((new Long(newTime/60)).compareTo(10L) > 0){
+                time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_not_recommend));
+                time.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
+            }
         } else {
-            time.setText( newTime/3600 + "");
-            hint.setText("小時"+(newTime - 3600 * (newTime/3600))%3600+"秒");
+            time.setText( newTime/3600 + " 小時");
+            time.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.round_text_orange));
+            time.setTextColor(ContextCompat.getColor(getContext(),R.color.defaultWhite));
         }
     }
 }
